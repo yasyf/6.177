@@ -227,9 +227,9 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
 
         if stop == False and pause == False: 
             board.squares.draw(screen) # draw Sprites (Squares)
-            # ** TODO: draw the grid **
+            draw_grid(screen,board.size) #draw the grid
             board.theAnt.draw(screen) # draw ant Sprite
-        
+            
             update_text(screen, "Move #" + str(moveCount), board.size)
             pygame.display.flip() # update screen
             clock.tick(10)
@@ -237,7 +237,7 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
             #--- Do next move ---#
 
             # Step 1: Rotate class Ant(pygame.sprite.Sprite):
-            # ** TODO: rotate the ant and save it's current square **
+            square = rotate_ant_get_square #rotate the ant and save it's current square
             board.squares.draw(screen) # draw Sprites (Squares) - they should cover up the ant's previous position
             # ** TODO: draw the grid here **
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
@@ -305,13 +305,13 @@ class Board:
         
         #---Initializes Squares (the "Board")---#
         self.squares = pygame.sprite.RenderPlain()
-        self.boardSquares = []
+        self.boardSquares = {}
         
         #---Populate boardSquares with Squares---#
         for row in range(size):
             for column in range(size):
                 s = Square(row,column,white)
-                self.boardSquares.append(s)
+                self.boardSquares[(column,row)] = s
                 self.squares.add(s)
 
         #---Initialize the Ant---#
@@ -325,42 +325,48 @@ class Board:
         """
         Given an (x, y) pair, return the Square at that location
         """
-        for square in self.boardSquares:
-            if square.get_rect_from_square().collidepoint(x,y):
-                return square
+        return boardSquares[(x,y)]
 
     def rotate_ant_get_square(self):
         """ 
         Rotate the ant, depending on the color of the square that it's on,
         and returns the square that the ant is currently on
         """
-
-        pass 
+        square = self.ant.get_current_square()
+        if square.color == white:
+            self.ant.rotate_right()
+        elif square.color == black:
+            self.ant.rotate_left()
+        return square
+         
 
 class Ant(pygame.sprite.Sprite):
+    transformations = [(0,1), (-1,0), (0,-1), (1,0)] #in order going counterclockwise
     def __init__(self, board, col, row):
         pygame.sprite.Sprite.__init__(self)
-        self.col = None
-        self.row = None
-        self.rect = None
+        self.col = col
+        self.row = row
         self.rotation = (0, 1) # pointing up
-        self.board = None
+        self.board = board
         self.set_pic()
+        self.rect = self.image.get_rect()
         
     def get_current_square(self):
-        pass
+        return get_square(self.col,self.row)
         
     def rotate_left(self):
         """
         Rotates the ant 90 degrees counterclockwise
         """
-        pass
+        pygame.transform.rotate(self.image,90)
+        self.rotation = transformations[transformations.index(self.rotation)+1] #next step in transformations
 
     def rotate_right(self):
         """
         Rotates the ant 90 degrees clockwise
         """
-        pass
+        pygame.transform.rotate(self.image,-90)
+        self.rotation = transformations[transformations.index(self.rotation)-1] #previous step in transformations
     
     def step_forward(self, board):
         """
@@ -368,7 +374,9 @@ class Ant(pygame.sprite.Sprite):
         Don't forget - row numbers increase from top to bottom and column numbers
         increase from left to right!
         """
-        pass
+        self.rect.move(self.rotation[0]*WIDTH,-self.rotation[1]*HEIGHT)
+        self.col += self.rotation[0]
+        self.row -= self.rotation[1]
     
     def set_pic(self):
         """
@@ -380,15 +388,15 @@ class Ant(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     # Uncomment this line to test your warmup answers:
-    T.test_warmup()
+    #T.test_warmup()
 
     # Uncomment this line to test Part 2:
-    T.test_part_two()
+    #T.test_part_two()
 
     # Uncomment this line to test Part 3:
-    T.test_part_three()
+    #T.test_part_three()
 
     # Uncomment this line to call new_game when this file is run:
-    # new_game()
+    new_game()
     
     pass
