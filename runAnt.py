@@ -270,32 +270,33 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
     pygame.quit() # closes things, keeps idle from freezing
 
 class Square(pygame.sprite.Sprite):
+    flip = {white: black, black: white} 
     def __init__(self, row, col, color):
         pygame.sprite.Sprite.__init__(self)
-        self.row = None
-        self.col = None
+        self.row = row
+        self.col = col
+        self.color = color
         self.image = pygame.Surface([WIDTH, HEIGHT])
-        self.image.fill(color)
+        self.image.fill(self.color)
         self.rect = self.image.get_rect() # gets a rect object with width and height specified above
                                             # a rect is a pygame object for handling rectangles
-        self.rect.x = get_col_left_loc(col)
-        self.rect.y = get_row_top_loc(row)
-        self.color = None   
+        self.rect.x = get_col_left_loc(self.col)
+        self.rect.y = get_row_top_loc(self.row)
+          
 
     def get_rect_from_square(self):
         """
         Returns the rect object that belongs to this Square
         """
-
-        pass
+        return self.rect
 
     def flip_color(self):
         """
         Flips the color of the square (white -> black or 
         black -> white)
         """
-
-        pass
+        self.color = flip[self.color]
+        self.image.fill(self.color)
    
 class Board:
     def __init__(self, size):
@@ -304,7 +305,7 @@ class Board:
         
         #---Initializes Squares (the "Board")---#
         self.squares = pygame.sprite.RenderPlain()
-        self.boardSquares = None
+        self.boardSquares = []
         
         #---Populate boardSquares with Squares---#
         pass
