@@ -1,6 +1,6 @@
 """
 6.177 Problem Set (IAP 2014)
-Completed by YOUR NAME HERE (YOUR E-MAIL ADDRESS HERE)
+Completed by Yasyf Mohamedali (yasyf@mit.edu)
 """
 
 """
@@ -19,7 +19,9 @@ Completed by YOUR NAME HERE (YOUR E-MAIL ADDRESS HERE)
 # ==> 5
 
 def operate(a, b):
-    raise NotImplementedError
+    first = (a-b)**b
+    second = (a+b)%10
+    return first if first > second else second
 
 
 ### 2. String and list operation
@@ -37,8 +39,19 @@ def operate(a, b):
 # myList 
 # ==> ['25maroon', 'ComBInE', 'apple', '0315']
 
+def ucfirstalpha(string):
+    import re
+    index = re.search("[a-zA-Z]",string)
+    if index:
+        return string[:index.start()].lower() + string[index.start()].upper() + string[index.start()+1:].lower()
+    return string
+
 def fix_strings(myStrings):
-    raise NotImplementedError
+    newList = [x[1:len(x)-1] for x in myStrings]
+    newList = list(map(ucfirstalpha,newList))
+    newList.reverse()
+    return newList
+
 
 
 ### 3. Class instances and methods
@@ -99,9 +112,10 @@ def fix_strings(myStrings):
 # ==> 60.07
 
 def modify(carInstance):
-    raise NotImplementedError
-
-
+    carInstance.new_name("Python")
+    carInstance.change_color("Ruby")
+    carInstance.combine_trips(lambda x: reduce(lambda y,z: y+(float(z[0])/float(z[1]) if z[1] != 0 else 0),x.values(),0))
+    return True
 
 
 """
@@ -352,7 +366,7 @@ class Ant(pygame.sprite.Sprite):
 
 if __name__ == "__main__":
     # Uncomment this line to test your warmup answers:
-    # T.test_warmup()
+    T.test_warmup()
 
     # Uncomment this line to test Part 2:
     # T.test_part_two()
