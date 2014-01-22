@@ -188,7 +188,7 @@ def new_game(size = 10):
 
     main_loop(screen, board, moveCount, clock, False, False)
 
-def draw_grid(screen, size):
+def draw_grid(screen, size, color=black):
     """
     Draw the border grid on the screen.
     """
@@ -196,11 +196,11 @@ def draw_grid(screen, size):
         #vertical lines
         start_pos = (get_col_left_loc(square),get_row_top_loc(0))
         end_pos = (get_col_left_loc(square),get_row_top_loc(size))
-        pygame.draw.line(screen,white,start_pos,end_pos)
+        pygame.draw.line(screen,color,start_pos,end_pos)
         #horizontal lines
         start_pos = (get_col_left_loc(0),get_row_top_loc(square))
         end_pos = (get_col_left_loc(size),get_row_top_loc(square))
-        pygame.draw.line(screen,white,start_pos,end_pos)
+        pygame.draw.line(screen,color,start_pos,end_pos)
 
 # Main program Loop: (called by new_game)
 def main_loop(screen, board, moveCount, clock, stop, pause):
@@ -308,7 +308,11 @@ class Board:
         self.boardSquares = []
         
         #---Populate boardSquares with Squares---#
-        pass
+        for row in range(size):
+            for column in range(size):
+                s = Square(row,column,white)
+                self.boardSquares.append(s)
+                self.squares.add(s)
 
         #---Initialize the Ant---#
         self.ant = Ant(self, size/2, size/2)
@@ -321,8 +325,9 @@ class Board:
         """
         Given an (x, y) pair, return the Square at that location
         """
-
-        pass
+        for square in self.boardSquares:
+            if square.get_rect_from_square().collidepoint(x,y):
+                return square
 
     def rotate_ant_get_square(self):
         """ 
@@ -381,7 +386,7 @@ if __name__ == "__main__":
     T.test_part_two()
 
     # Uncomment this line to test Part 3:
-    # T.test_part_three()
+    T.test_part_three()
 
     # Uncomment this line to call new_game when this file is run:
     # new_game()

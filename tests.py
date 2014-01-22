@@ -111,7 +111,7 @@ def test_part_two(size=10):
     board = P.Board(size)
     moveCount = 0
     clock = P.pygame.time.Clock()
-    P.draw_grid(screen,board.size)
+    P.draw_grid(screen,board.size,color=P.white)
     P.pygame.display.flip()
     time.sleep(2)
     P.pygame.quit()
