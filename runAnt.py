@@ -128,8 +128,8 @@ import pygame, sys
 import tests as T
 
 ### Global Variables
-WIDTH = None  # this is the width of an individual square
-HEIGHT = None # this is the height of an individual square
+WIDTH = 75  # this is the width of an individual square
+HEIGHT = 75 # this is the height of an individual square
 
 # RGB Color definitions
 black = (0, 0, 0)
@@ -144,14 +144,14 @@ def get_row_top_loc(rowNum, height = HEIGHT):
     Returns the location of the top pixel in a square in
     row rowNum, given the row height.
     """
-    pass
+    return (rowNum*height) + 10
 
 def get_col_left_loc(colNum, width = WIDTH):
     """
     Returns the location of the leftmost pixel in a square in
     column colNum, given the column width.
     """
-    pass
+    return (colNum*width) + 10
 
 def update_text(screen, message, size = 10):
     """
@@ -192,7 +192,15 @@ def draw_grid(screen, size):
     """
     Draw the border grid on the screen.
     """
-    pass
+    for square in range(size+1):
+        #vertical lines
+        start_pos = (get_col_left_loc(square),get_row_top_loc(0))
+        end_pos = (get_col_left_loc(square),get_row_top_loc(size))
+        pygame.draw.line(screen,white,start_pos,end_pos)
+        #horizontal lines
+        start_pos = (get_col_left_loc(0),get_row_top_loc(square))
+        end_pos = (get_col_left_loc(size),get_row_top_loc(square))
+        pygame.draw.line(screen,white,start_pos,end_pos)
 
 # Main program Loop: (called by new_game)
 def main_loop(screen, board, moveCount, clock, stop, pause):
@@ -369,7 +377,7 @@ if __name__ == "__main__":
     T.test_warmup()
 
     # Uncomment this line to test Part 2:
-    # T.test_part_two()
+    T.test_part_two()
 
     # Uncomment this line to test Part 3:
     # T.test_part_three()
