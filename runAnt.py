@@ -239,25 +239,25 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
             # Step 1: Rotate class Ant(pygame.sprite.Sprite):
             square = rotate_ant_get_square #rotate the ant and save it's current square
             board.squares.draw(screen) # draw Sprites (Squares) - they should cover up the ant's previous position
-            # ** TODO: draw the grid here **
+            draw_grid(screen,board.size) #draw the grid
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
             pygame.display.flip() # update screen
             clock.tick(5)
             
             # Step 2: Flip color of square:
-            # ** TODO: flip the color of the square here **
+            square.flip_color() #flip the color of the square
             board.squares.draw(screen) # draw Sprites (Squares) - they should cover up the ant's previous position
-            # ** TODO: draw the grid here **
+            draw_grid(screen,board.size) #draw the grid
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
             pygame.display.flip() #update screen
             clock.tick(5)
             
             # Step 3: Move Ant
-            # ** TODO: make the ant step forward here **
+            board.ant.step_forward() #make the ant step forward
             board.squares.draw(screen) # draw Sprites (Squares) - they should cover up the ant's previous position
-            # ** TODO: draw the grid here **
+            draw_grid(screen,board.size) #draw the grid
 
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
@@ -368,7 +368,7 @@ class Ant(pygame.sprite.Sprite):
         pygame.transform.rotate(self.image,-90)
         self.rotation = transformations[transformations.index(self.rotation)-1] #previous step in transformations
     
-    def step_forward(self, board):
+    def step_forward(self):
         """
         Make the ant take a step forward in whatever direction it's currently pointing.
         Don't forget - row numbers increase from top to bottom and column numbers
