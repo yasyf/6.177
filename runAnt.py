@@ -237,7 +237,7 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
             #--- Do next move ---#
 
             # Step 1: Rotate class Ant(pygame.sprite.Sprite):
-            square = rotate_ant_get_square #rotate the ant and save it's current square
+            square = board.rotate_ant_get_square() #rotate the ant and save it's current square
             board.squares.draw(screen) # draw Sprites (Squares) - they should cover up the ant's previous position
             draw_grid(screen,board.size) #draw the grid
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
@@ -270,7 +270,7 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
     pygame.quit() # closes things, keeps idle from freezing
 
 class Square(pygame.sprite.Sprite):
-    flip = {white: black, black: white} 
+    transformations = {white: black, black: white} 
     def __init__(self, row, col, color):
         pygame.sprite.Sprite.__init__(self)
         self.row = row
@@ -295,7 +295,7 @@ class Square(pygame.sprite.Sprite):
         Flips the color of the square (white -> black or 
         black -> white)
         """
-        self.color = flip[self.color]
+        self.color = Square.transformations[self.color]
         self.image.fill(self.color)
    
 class Board:
@@ -325,7 +325,7 @@ class Board:
         """
         Given an (x, y) pair, return the Square at that location
         """
-        return boardSquares[(x,y)]
+        return self.boardSquares[(x,y)]
 
     def rotate_ant_get_square(self):
         """ 
@@ -352,21 +352,21 @@ class Ant(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
     def get_current_square(self):
-        return get_square(self.col,self.row)
+        return self.board.get_square(self.col,self.row)
         
     def rotate_left(self):
         """
         Rotates the ant 90 degrees counterclockwise
         """
         pygame.transform.rotate(self.image,90)
-        self.rotation = transformations[transformations.index(self.rotation)+1] #next step in transformations
+        self.rotation = Ant.transformations[Ant.transformations.index(self.rotation)+1] #next step in transformations
 
     def rotate_right(self):
         """
         Rotates the ant 90 degrees clockwise
         """
         pygame.transform.rotate(self.image,-90)
-        self.rotation = transformations[transformations.index(self.rotation)-1] #previous step in transformations
+        self.rotation = Ant.transformations[Ant.transformations.index(self.rotation)-1] #previous step in transformations
     
     def step_forward(self):
         """
@@ -374,7 +374,7 @@ class Ant(pygame.sprite.Sprite):
         Don't forget - row numbers increase from top to bottom and column numbers
         increase from left to right!
         """
-        self.rect.move(self.rotation[0]*WIDTH,-self.rotation[1]*HEIGHT)
+        
         self.col += self.rotation[0]
         self.row -= self.rotation[1]
     
