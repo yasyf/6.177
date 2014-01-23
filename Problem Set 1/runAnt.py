@@ -124,7 +124,7 @@ def modify(carInstance):
 
 # Algorithm described at http://en.wikipedia.org/wiki/Langton%27s_ant
 
-import pygame, sys
+import pygame, sys, random, argparse
 import tests as T
 
 ### Global Variables
@@ -174,7 +174,6 @@ def new_game():
     Sets up all necessary components to start a new game
     of Langton's Ant.
     """
-    import argparse
 
     parser = argparse.ArgumentParser(description='Langton\'s Ant')
     parser.add_argument('-r','--rows', help='Number of rows', type=int, required=True)
@@ -329,7 +328,7 @@ class Board:
                 self.squares.add(s)
 
         #---Initialize the Ant---#
-        self.ant = Ant(self, size[1]/2, size[0]/2)
+        self.ant = Ant(self, random.randint(0,self.size[1]-1), random.randint(0,self.size[0]-1))
                           
         #---Adds Ant to the "theAnt" Sprite List---#
         self.theAnt = pygame.sprite.RenderPlain()
