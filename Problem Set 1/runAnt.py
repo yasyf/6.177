@@ -127,9 +127,10 @@ def modify(carInstance):
 import pygame, sys, random, argparse
 import tests as T
 
-### Global Variables
-WIDTH = 75  # this is the width of an individual square
-HEIGHT = 75 # this is the height of an individual square
+
+height = 100
+width = height
+offset = 10
 
 # RGB Color definitions
 black = (0, 0, 0)
@@ -139,19 +140,19 @@ green = (0, 255, 0)
 red   = (255, 0, 0)
 blue  = (0, 0, 255)
 
-def get_row_top_loc(rowNum, height = HEIGHT):
+def get_row_top_loc(rowNum, height = height):
     """
     Returns the location of the top pixel in a square in
     row rowNum, given the row height.
     """
-    return (rowNum*height) + 30
+    return (rowNum*height) + offset
 
-def get_col_left_loc(colNum, width = WIDTH):
+def get_col_left_loc(colNum, width = width):
     """
     Returns the location of the leftmost pixel in a square in
     column colNum, given the column width.
     """
-    return (colNum*width) + 10
+    return (colNum*width) + offset
 
 def update_text(screen, message, size):
     """
@@ -159,13 +160,13 @@ def update_text(screen, message, size):
     You don't need to code anything, but you may want to read and
     understand this part.
     """
-    offset = 10
-    textSize = 40
+    
+    textSize = height/2
     font = pygame.font.Font(None, textSize)
-    textY = 0 + textSize
-    text = font.render(message, True, white, black)
+    textY = textSize
+    text = font.render(message, True, black, white)
     textRect = text.get_rect()
-    textRect.centerx = (size[1] + 1) * WIDTH + 10
+    textRect.centerx = (size[1] + 1) * width
     textRect.centery = textY + offset
     screen.blit(text, textRect)
 
@@ -178,6 +179,7 @@ def new_game():
     parser = argparse.ArgumentParser(description='Langton\'s Ant')
     parser.add_argument('-r','--rows', help='Number of rows', type=int, required=True)
     parser.add_argument('-c','--columns', help='Number of columns', type=int, required=True)
+    parser.add_argument('-l','--length', help='Length of square\'s side', type=int, required=True)
     args = vars(parser.parse_args())
 
     num_rows = args["rows"]
@@ -187,8 +189,9 @@ def new_game():
 
     pygame.init() # initialize all imported pygame modules
 
-    window_size = [size[1] * WIDTH + 200, size[0] * HEIGHT + 40] # width, height
-    screen = pygame.display.set_mode(window_size)
+    window_size = [(size[1] + 2) * width, size[0] * height + 20] # width, height
+    screen = pygame.display.set_mode((window_size), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
+    pygame.draw.rect(screen,white,((size[1] * width),offset,((2 * width)-offset),(size[0] * height)))
 
     pygame.display.set_caption("Langton's Ant") # caption sets title of Window 
 
@@ -283,13 +286,13 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
     pygame.quit() # closes things, keeps idle from freezing
 
 class Square(pygame.sprite.Sprite):
-    transformations = {white: black, black: white} 
+    transformations = {white: grey, grey: white} 
     def __init__(self, row, col, color):
         pygame.sprite.Sprite.__init__(self)
         self.row = row
         self.col = col
         self.color = color
-        self.image = pygame.Surface([WIDTH, HEIGHT])
+        self.image = pygame.Surface([width, height])
         self.image.fill(self.color)
         self.rect = self.image.get_rect() # gets a rect object with width and height specified above
                                             # a rect is a pygame object for handling rectangles
@@ -411,6 +414,7 @@ class Ant(pygame.sprite.Sprite):
         this method.
         """
         self.image = pygame.image.load("ant.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (width, height))
 
 if __name__ == "__main__":
     # Uncomment this line to test your warmup answers:
