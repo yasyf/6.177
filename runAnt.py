@@ -350,25 +350,25 @@ class Ant(pygame.sprite.Sprite):
         self.board = board
         self.set_pic()
         self.rect = self.image.get_rect()
-        self.rect.x = get_row_top_loc(self.row)
-        self.rect.y = get_col_left_loc(self.col)
+        self.rect.x = get_col_left_loc(self.col)
+        self.rect.y = get_row_top_loc(self.row)
         
     def get_current_square(self):
-        return self.board.get_square(self.row,self.col)
+        return self.board.get_square(self.col,self.row)
         
     def rotate_left(self):
         """
         Rotates the ant 90 degrees counterclockwise
         """
         pygame.transform.rotate(self.image,90)
-        #self.rotation = Ant.transformations[Ant.transformations.index(self.rotation)+1] #next step in transformations
+        self.rotation = Ant.transformations[(Ant.transformations.index(self.rotation)+1)%4] #next step in transformations
 
     def rotate_right(self):
         """
         Rotates the ant 90 degrees clockwise
         """
         pygame.transform.rotate(self.image,-90)
-        #self.rotation = Ant.transformations[Ant.transformations.index(self.rotation)-1] #previous step in transformations
+        self.rotation = Ant.transformations[(Ant.transformations.index(self.rotation)-1)%4] #previous step in transformations
     
     def step_forward(self):
         """
@@ -378,8 +378,8 @@ class Ant(pygame.sprite.Sprite):
         """
         self.col += self.rotation[0]
         self.row -= self.rotation[1]
-        self.rect.x = get_row_top_loc(self.row)
-        self.rect.y = get_col_left_loc(self.col)
+        self.rect.x = get_col_left_loc(self.col)
+        self.rect.y = get_row_top_loc(self.row)
     
     def set_pic(self):
         """
