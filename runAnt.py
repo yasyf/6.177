@@ -144,7 +144,7 @@ def get_row_top_loc(rowNum, height = HEIGHT):
     Returns the location of the top pixel in a square in
     row rowNum, given the row height.
     """
-    return (rowNum*height) + 10
+    return (rowNum*height) + 30
 
 def get_col_left_loc(colNum, width = WIDTH):
     """
@@ -159,13 +159,14 @@ def update_text(screen, message, size = 10):
     You don't need to code anything, but you may want to read and
     understand this part.
     """
+    offset = 10
     textSize = 20
-    font = pygame.font.Font(None, 20)
+    font = pygame.font.Font(None, textSize)
     textY = 0 + textSize
     text = font.render(message, True, white, black)
     textRect = text.get_rect()
     textRect.centerx = (size + 1) * WIDTH + 10
-    textRect.centery = textY
+    textRect.centery = textY + offset
     screen.blit(text, textRect)
 
 def new_game(size = 10):
@@ -175,7 +176,7 @@ def new_game(size = 10):
     """
     pygame.init() # initialize all imported pygame modules
 
-    window_size = [size * WIDTH + 200, size * HEIGHT + 20] # width, height
+    window_size = [size * WIDTH + 200, size * HEIGHT + 40] # width, height
     screen = pygame.display.set_mode(window_size)
 
     pygame.display.set_caption("Langton's Ant") # caption sets title of Window 
@@ -360,14 +361,14 @@ class Ant(pygame.sprite.Sprite):
         """
         Rotates the ant 90 degrees counterclockwise
         """
-        pygame.transform.rotate(self.image,90)
+        self.image = pygame.transform.rotate(self.image,90)
         self.rotation = Ant.transformations[(Ant.transformations.index(self.rotation)+1)%4] #next step in transformations
 
     def rotate_right(self):
         """
         Rotates the ant 90 degrees clockwise
         """
-        pygame.transform.rotate(self.image,-90)
+        self.image = pygame.transform.rotate(self.image,-90)
         self.rotation = Ant.transformations[(Ant.transformations.index(self.rotation)-1)%4] #previous step in transformations
     
     def step_forward(self):
