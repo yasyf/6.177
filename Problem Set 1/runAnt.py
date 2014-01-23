@@ -174,9 +174,15 @@ def new_game():
     Sets up all necessary components to start a new game
     of Langton's Ant.
     """
+    import argparse
 
-    num_rows = input("Enter number of rows\n")
-    num_cols = input("Enter number of columns\n")
+    parser = argparse.ArgumentParser(description='Langton\'s Ant')
+    parser.add_argument('-r','--rows', help='Number of rows', type=int, required=True)
+    parser.add_argument('-c','--columns', help='Number of columns', type=int, required=True)
+    args = vars(parser.parse_args())
+
+    num_rows = args["rows"]
+    num_cols = args["columns"]
 
     size = (num_rows,num_cols)
 
