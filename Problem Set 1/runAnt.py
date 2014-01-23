@@ -153,30 +153,36 @@ def get_col_left_loc(colNum, width = WIDTH):
     """
     return (colNum*width) + 10
 
-def update_text(screen, message, size = 10):
+def update_text(screen, message, size):
     """
     Used to display the text on the right-hand part of the screen.
     You don't need to code anything, but you may want to read and
     understand this part.
     """
     offset = 10
-    textSize = 20
+    textSize = 40
     font = pygame.font.Font(None, textSize)
     textY = 0 + textSize
     text = font.render(message, True, white, black)
     textRect = text.get_rect()
-    textRect.centerx = (size + 1) * WIDTH + 10
+    textRect.centerx = (size[1] + 1) * WIDTH + 10
     textRect.centery = textY + offset
     screen.blit(text, textRect)
 
-def new_game(size = 10):
+def new_game():
     """
     Sets up all necessary components to start a new game
     of Langton's Ant.
     """
+
+    num_rows = input("Enter number of rows\n")
+    num_cols = input("Enter number of columns\n")
+
+    size = (num_rows,num_cols)
+
     pygame.init() # initialize all imported pygame modules
 
-    window_size = [size * WIDTH + 200, size * HEIGHT + 40] # width, height
+    window_size = [size[1] * WIDTH + 200, size[0] * HEIGHT + 40] # width, height
     screen = pygame.display.set_mode(window_size)
 
     pygame.display.set_caption("Langton's Ant") # caption sets title of Window 
@@ -193,14 +199,15 @@ def draw_grid(screen, size, color=black):
     """
     Draw the border grid on the screen.
     """
-    for square in range(size+1):
+    for square in range(size[1]+1):
         #vertical lines
         start_pos = (get_col_left_loc(square),get_row_top_loc(0))
-        end_pos = (get_col_left_loc(square),get_row_top_loc(size))
+        end_pos = (get_col_left_loc(square),get_row_top_loc(size[0]))
         pygame.draw.line(screen,color,start_pos,end_pos)
+    for square in range(size[0]+1):
         #horizontal lines
         start_pos = (get_col_left_loc(0),get_row_top_loc(square))
-        end_pos = (get_col_left_loc(size),get_row_top_loc(square))
+        end_pos = (get_col_left_loc(size[1]),get_row_top_loc(square))
         pygame.draw.line(screen,color,start_pos,end_pos)
 
 # Main program Loop: (called by new_game)
@@ -309,14 +316,14 @@ class Board:
         self.boardSquares = {}
         
         #---Populate boardSquares with Squares---#
-        for row in range(size):
-            for column in range(size):
+        for row in range(size[0]):
+            for column in range(size[1]):
                 s = Square(row,column,white)
                 self.boardSquares[(column,row)] = s
                 self.squares.add(s)
 
         #---Initialize the Ant---#
-        self.ant = Ant(self, size/2, size/2)
+        self.ant = Ant(self, size[1]/2, size[0]/2)
                           
         #---Adds Ant to the "theAnt" Sprite List---#
         self.theAnt = pygame.sprite.RenderPlain()
