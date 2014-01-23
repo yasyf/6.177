@@ -339,10 +339,18 @@ class Board:
         """
         Given an (x, y) pair, return the Square at that location
         """
-        return self.boardSquares[(x,y)]
+        try:
+            return self.boardSquares[(x,y)]
+        except KeyError:
+            x = x % self.size[0]
+            y = y % self.size[1]
+            self.ant.col = x
+            self.ant.row = y
+            self.ant.rect_to_point()
+            return self.boardSquares[(x,y)]
 
     def rotate_ant_get_square(self):
-        """ 
+        """
         Rotate the ant, depending on the color of the square that it's on,
         and returns the square that the ant is currently on
         """
@@ -364,9 +372,12 @@ class Ant(pygame.sprite.Sprite):
         self.board = board
         self.set_pic()
         self.rect = self.image.get_rect()
+        self.rect_to_point()
+        
+    def rect_to_point(self):
         self.rect.x = get_col_left_loc(self.col)
         self.rect.y = get_row_top_loc(self.row)
-        
+
     def get_current_square(self):
         return self.board.get_square(self.col,self.row)
         
@@ -392,8 +403,7 @@ class Ant(pygame.sprite.Sprite):
         """
         self.col += self.rotation[0]
         self.row -= self.rotation[1]
-        self.rect.x = get_col_left_loc(self.col)
-        self.rect.y = get_row_top_loc(self.row)
+        self.rect_to_point()
     
     def set_pic(self):
         """
