@@ -128,8 +128,8 @@ import pygame, sys, random, argparse
 import tests as T
 
 
-height = 100
-width = height
+height = None
+width = None
 offset = 10
 
 # RGB Color definitions
@@ -140,14 +140,14 @@ green = (0, 255, 0)
 red   = (255, 0, 0)
 blue  = (0, 0, 255)
 
-def get_row_top_loc(rowNum, height = height):
+def get_row_top_loc(rowNum):
     """
     Returns the location of the top pixel in a square in
     row rowNum, given the row height.
     """
     return (rowNum*height) + offset
 
-def get_col_left_loc(colNum, width = width):
+def get_col_left_loc(colNum):
     """
     Returns the location of the leftmost pixel in a square in
     column colNum, given the column width.
