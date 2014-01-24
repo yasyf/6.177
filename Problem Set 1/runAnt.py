@@ -242,6 +242,7 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
     board.squares.draw(screen) # draw Sprites (Squares)
     draw_grid(screen, board.size)
     board.theAnt.draw(screen) # draw ant Sprite
+    update_text(screen, "Move #" + str(moveCount), board.size)
     pygame.display.flip() # update screen
     
     if stop == True:
@@ -267,7 +268,6 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
                         pause = True
 
         if stop == False and pause == False: 
-            update_text(screen, "Move #" + str(moveCount), board.size)
             pygame.display.flip()
             clock.tick(10)
 
@@ -277,7 +277,7 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
             square = board.rotate_ant_get_square() #rotate the ant and save it's current square
             board.squares.draw(screen) # draw Sprites (Squares) - they should cover up the ant's previous position
             draw_grid(screen,board.size) #draw the grid
-            
+            moveCount += 1
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
             #pygame.display.flip() # update screen
@@ -305,8 +305,8 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
             board.theAnt.draw(screen) # draw ant Sprite
             draw_side_bar(screen,board.size)
             draw_grid(screen,board.size) #draw the grid
+            update_text(screen, "Move #" + str(moveCount), board.size)
             pygame.display.flip() # update screen
-            moveCount += 1
             # ------------------------
 
     pygame.quit() # closes things, keeps idle from freezing
