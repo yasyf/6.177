@@ -154,6 +154,17 @@ def get_col_left_loc(colNum, width = width):
     """
     return (colNum*width) + offset
 
+
+def add_pause_button(screen, size):
+    textSize = height/2
+    font = pygame.font.Font(None,textSize)
+    pause_text = font.render("Pause", True, black, white)
+    pause_rect = pause_text.get_rect()
+    pause_rect.centerx = (size[1] + 1) * width
+    pause_rect.centery = (size[0] - 1) * height
+    screen.blit(pause_text,pause_rect)
+    return pause_rect
+
 def update_text(screen, message, size):
     """
     Used to display the text on the right-hand part of the screen.
@@ -163,11 +174,10 @@ def update_text(screen, message, size):
     
     textSize = height/2
     font = pygame.font.Font(None, textSize)
-    textY = textSize
     text = font.render(message, True, black, white)
     textRect = text.get_rect()
     textRect.centerx = (size[1] + 1) * width
-    textRect.centery = textY + offset
+    textRect.centery = height
     screen.blit(text, textRect)
 
 def new_game():
@@ -193,6 +203,8 @@ def new_game():
     screen = pygame.display.set_mode((window_size), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
     pygame.draw.rect(screen,white,((size[1] * width),offset,((2 * width)-offset),(size[0] * height)))
 
+    pause_rect = add_pause_button(screen, size)
+
     pygame.display.set_caption("Langton's Ant") # caption sets title of Window 
 
     board = Board(size)
@@ -201,7 +213,7 @@ def new_game():
 
     clock = pygame.time.Clock()
 
-    main_loop(screen, board, moveCount, clock, False, False)
+    main_loop(screen, board, moveCount, clock, False, False, pause_rect)
 
 def draw_grid(screen, size, color=black):
     """
@@ -219,7 +231,7 @@ def draw_grid(screen, size, color=black):
         pygame.draw.line(screen,color,start_pos,end_pos)
 
 # Main program Loop: (called by new_game)
-def main_loop(screen, board, moveCount, clock, stop, pause):
+def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
     board.squares.draw(screen) # draw Sprites (Squares)
     draw_grid(screen, board.size)
     board.theAnt.draw(screen) # draw ant Sprite
@@ -234,6 +246,12 @@ def main_loop(screen, board, moveCount, clock, stop, pause):
             if event.type == pygame.QUIT: #user clicks close
                 stop = True
                 pygame.quit()
+            elif event.type==pygame.MOUSEBUTTONUP:
+                if pause_rect.collidepoint(event.pos):
+                    if pause:
+                        pause = False
+                    else:
+                        pause = True
             elif event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_p:
                     if pause:
