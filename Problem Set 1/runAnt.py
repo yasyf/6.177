@@ -388,7 +388,7 @@ class Board:
         square = self.ant.get_current_square()
         if square.color == white:
             self.ant.rotate_right()
-        elif square.color == black:
+        else:
             self.ant.rotate_left()
         return square
          
