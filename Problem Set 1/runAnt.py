@@ -158,7 +158,7 @@ def get_col_left_loc(colNum, width = width):
 def draw_pause_button(screen, size):
     textSize = height/2
     font = pygame.font.Font(None,textSize)
-    pause_text = font.render("Pause", True, black, grey)
+    pause_text = font.render("Pause", True, black, white)
     pause_rect = pause_text.get_rect()
     pause_rect.centerx = (size[1] + 1) * width
     pause_rect.centery = (size[0] - 1) * height
@@ -182,7 +182,7 @@ def update_text(screen, message, size):
 
 def draw_side_bar(screen,size):
 
-    pygame.draw.rect(screen,white,((size[1] * width),offset,((2 * width)-offset),(size[0] * height)))
+    pygame.draw.rect(screen, white,((size[1] * width)+offset, offset,((2 * width)-(2*offset)),(size[0] * height)))
     return draw_pause_button(screen,size)
 
 def new_game():
@@ -190,6 +190,7 @@ def new_game():
     Sets up all necessary components to start a new game
     of Langton's Ant.
     """
+    global width, height
 
     parser = argparse.ArgumentParser(description='Langton\'s Ant')
     parser.add_argument('-r','--rows', help='Number of rows', type=int, required=True)
@@ -199,6 +200,8 @@ def new_game():
 
     num_rows = args["rows"]
     num_cols = args["columns"]
+    width = args["length"]
+    height = width
 
     size = (num_rows,num_cols)
 
@@ -211,7 +214,7 @@ def new_game():
 
     pygame.display.set_caption("Langton's Ant") # caption sets title of Window 
 
-    board = Board(size)
+    board = Board(screen, size)
 
     moveCount = 0
 
@@ -264,12 +267,8 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
                         pause = True
 
         if stop == False and pause == False: 
-            draw_side_bar(screen,board.size)
-            board.squares.draw(screen) # draw Sprites (Squares)
-            draw_grid(screen,board.size) #draw the grid
-            board.theAnt.draw(screen) # draw ant Sprite
             update_text(screen, "Move #" + str(moveCount), board.size)
-            pygame.display.flip() # update screen
+            pygame.display.flip()
             clock.tick(10)
 
             #--- Do next move ---#
@@ -281,7 +280,7 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
             
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
-            pygame.display.flip() # update screen
+            #pygame.display.flip() # update screen
             clock.tick(5)
             
             # Step 2: Flip color of square:
@@ -290,7 +289,7 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
             draw_grid(screen,board.size) #draw the grid
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
-            pygame.display.flip() #update screen
+            #pygame.display.flip() #update screen
             clock.tick(5)
             
             # Step 3: Move Ant
@@ -299,9 +298,14 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
             draw_grid(screen,board.size) #draw the grid
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
-            pygame.display.flip() # update screen
+            #pygame.display.flip() # update screen
             clock.tick(5)
-            
+
+            board.squares.draw(screen) # draw Sprites (Squares)
+            board.theAnt.draw(screen) # draw ant Sprite
+            draw_side_bar(screen,board.size)
+            draw_grid(screen,board.size) #draw the grid
+            pygame.display.flip() # update screen
             moveCount += 1
             # ------------------------
 
@@ -337,9 +341,10 @@ class Square(pygame.sprite.Sprite):
         self.image.fill(self.color)
    
 class Board:
-    def __init__(self, size):
+    def __init__(self, screen, size):
 
         self.size = size
+        self.screen = screen
         
         #---Initializes Squares (the "Board")---#
         self.squares = pygame.sprite.RenderPlain()
@@ -371,6 +376,8 @@ class Board:
             self.ant.col = x
             self.ant.row = y
             self.ant.rect_to_point()
+            self.theAnt.draw(self.screen) # draw ant Sprite
+            pygame.display.flip() # update screen
             return self.boardSquares[(x,y)]
 
     def rotate_ant_get_square(self):
