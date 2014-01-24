@@ -196,12 +196,26 @@ def new_game():
     parser.add_argument('-r','--rows', help='Number of rows', type=int, required=True)
     parser.add_argument('-c','--columns', help='Number of columns', type=int, required=True)
     parser.add_argument('-l','--length', help='Length of square\'s side', type=int, required=True)
+    parser.add_argument('-x','--startx', help='Starting x-position', type=int, required=False)
+    parser.add_argument('-y','--starty', help='Starting y-position', type=int, required=False)
     args = vars(parser.parse_args())
 
     num_rows = args["rows"]
     num_cols = args["columns"]
     width = args["length"]
     height = width
+    startx = args["startx"]
+    starty = args["starty"]
+    
+    if args['startx'] and not args['starty']:
+        parser.error( '-y is required when -x is set.')
+    if args['starty'] and not args['startx']:
+        parser.error( '-x is required when -y is set.')
+
+    if startx > num_cols-1:
+        parser.error('Starting x-position must be between 0 and ' + str(num_cols-1))
+    if starty > num_rows-1:
+        parser.error('Starting y-position must be between 0 and ' + str(num_rows-1))
 
     size = (num_rows,num_cols)
 
@@ -214,7 +228,7 @@ def new_game():
 
     pygame.display.set_caption("Langton's Ant") # caption sets title of Window 
 
-    board = Board(screen, size)
+    board = Board(screen, size, startx, starty)
 
     moveCount = 0
 
@@ -341,7 +355,7 @@ class Square(pygame.sprite.Sprite):
         self.image.fill(self.color)
    
 class Board:
-    def __init__(self, screen, size):
+    def __init__(self, screen, size, startx, starty):
 
         self.size = size
         self.screen = screen
@@ -358,7 +372,10 @@ class Board:
                 self.squares.add(s)
 
         #---Initialize the Ant---#
-        self.ant = Ant(self, random.randint(0,self.size[1]-1), random.randint(0,self.size[0]-1))
+        if startx and starty:
+            self.ant = Ant(self, startx, starty)
+        else:
+            self.ant = Ant(self, random.randint(0,self.size[1]-1), random.randint(0,self.size[0]-1))
                           
         #---Adds Ant to the "theAnt" Sprite List---#
         self.theAnt = pygame.sprite.RenderPlain()
