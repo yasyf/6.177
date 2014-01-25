@@ -155,15 +155,28 @@ def get_col_left_loc(colNum):
     return (colNum*width) + offset
 
 
-def draw_pause_button(screen, size):
+def draw_pause_button(screen, size, paused=False):
     textSize = height/2
     font = pygame.font.Font(None,textSize)
-    pause_text = font.render("Pause", True, black, white)
+    if paused:
+        pause_text = font.render("Resume", True, green, white)
+    else:
+        pause_text = font.render("Pause", True, red, white)
     pause_rect = pause_text.get_rect()
     pause_rect.centerx = (size[1] + 1) * width
-    pause_rect.centery = (size[0] - 1) * height
+    pause_rect.centery = (size[0]/2) * height
     screen.blit(pause_text,pause_rect)
     return pause_rect
+
+def draw_quit_button(screen, size):
+    textSize = height/2
+    font = pygame.font.Font(None,textSize)
+    quit_text = font.render("Quit", True, red, white)
+    quit_rect = quit_text.get_rect()
+    quit_rect.centerx = (size[1] + 1) * width
+    quit_rect.centery = (size[0] - 1) * height
+    screen.blit(quit_text,quit_rect)
+    return quit_rect
 
 def update_text(screen, message, size):
     """
@@ -180,10 +193,10 @@ def update_text(screen, message, size):
     textRect.centery = height
     screen.blit(text, textRect)
 
-def draw_side_bar(screen,size):
+def draw_side_bar(screen,size,paused=False):
 
     pygame.draw.rect(screen, white,((size[1] * width)+offset, offset,((2 * width)-(2*offset)),(size[0] * height)))
-    return draw_pause_button(screen,size)
+    return draw_pause_button(screen,size,paused=paused), draw_quit_button(screen,size)
 
 def new_game():
     """
@@ -224,7 +237,7 @@ def new_game():
     window_size = [(size[1] + 2) * width, size[0] * height + 20] # width, height
     screen = pygame.display.set_mode((window_size), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
     
-    pause_rect = draw_side_bar(screen,size)
+    pause_rect, quit_rect = draw_side_bar(screen,size)
 
     pygame.display.set_caption("Langton's Ant") # caption sets title of Window 
 
@@ -234,7 +247,7 @@ def new_game():
 
     clock = pygame.time.Clock()
 
-    main_loop(screen, board, moveCount, clock, False, False, pause_rect)
+    main_loop(screen, board, moveCount, clock, False, False, pause_rect, quit_rect)
 
 def draw_grid(screen, size, color=black):
     """
@@ -252,7 +265,7 @@ def draw_grid(screen, size, color=black):
         pygame.draw.line(screen,color,start_pos,end_pos)
 
 # Main program Loop: (called by new_game)
-def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
+def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect, quit_rect):
     board.squares.draw(screen) # draw Sprites (Squares)
     draw_grid(screen, board.size)
     board.theAnt.draw(screen) # draw ant Sprite
@@ -270,28 +283,36 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
                 pygame.quit()
             elif event.type==pygame.MOUSEBUTTONUP:
                 if pause_rect.collidepoint(event.pos):
-                    if pause:
-                        pause = False
+                    if board.paused:
+                        board.paused = False
                     else:
-                        pause = True
+                        board.paused = True
+                    board.reprint_all()
+                elif quit_rect.collidepoint(event.pos):
+                    top = True
+                    pygame.quit()
+
             elif event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_p:
-                    if pause:
-                        pause = False
+                    if board.paused:
+                        board.paused = False
                     else:
-                        pause = True
+                        board.paused = True
+                    board.reprint_all()
+                elif event.key==pygame.K_q:
+                    stop = True
+                    pygame.quit()
 
-        if stop == False and pause == False: 
+        if stop == False and board.paused == False: 
             pygame.display.flip()
             clock.tick(10)
-
             #--- Do next move ---#
 
             # Step 1: Rotate class Ant(pygame.sprite.Sprite):
             square = board.rotate_ant_get_square() #rotate the ant and save it's current square
             board.squares.draw(screen) # draw Sprites (Squares) - they should cover up the ant's previous position
             draw_grid(screen,board.size) #draw the grid
-            moveCount += 1
+            board.moveCount += 1
             board.theAnt.draw(screen) # draw ant Sprite (rotated)
             
             #pygame.display.flip() # update screen
@@ -315,15 +336,11 @@ def main_loop(screen, board, moveCount, clock, stop, pause, pause_rect):
             #pygame.display.flip() # update screen
             clock.tick(5)
 
-            board.squares.draw(screen) # draw Sprites (Squares)
-            board.theAnt.draw(screen) # draw ant Sprite
-            draw_side_bar(screen,board.size)
-            draw_grid(screen,board.size) #draw the grid
-            update_text(screen, "Move #" + str(moveCount), board.size)
-            pygame.display.flip() # update screen
+            board.reprint_all()
             # ------------------------
 
     pygame.quit() # closes things, keeps idle from freezing
+
 
 class Square(pygame.sprite.Sprite):
     transformations = {white: grey, grey: white} 
@@ -359,6 +376,8 @@ class Board:
 
         self.size = size
         self.screen = screen
+        self.moveCount = 0
+        self.paused = False
         
         #---Initializes Squares (the "Board")---#
         self.squares = pygame.sprite.RenderPlain()
@@ -408,6 +427,14 @@ class Board:
         else:
             self.ant.rotate_left()
         return square
+
+    def reprint_all(self):
+        self.squares.draw(self.screen) # draw Sprites (Squares)
+        self.theAnt.draw(self.screen) # draw ant Sprite
+        draw_side_bar(self.screen,self.size,paused=self.paused)
+        draw_grid(self.screen,self.size) #draw the grid
+        update_text(self.screen, "Move #" + str(self.moveCount), self.size)
+        pygame.display.flip() # update screen
          
 
 class Ant(pygame.sprite.Sprite):
