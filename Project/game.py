@@ -10,7 +10,7 @@ def new_game():
     
     pygame.display.set_caption("Japanese PacMan") # caption sets title of Window 
 
-    g.screen = pygame.display.set_mode(WINDOW_SIZE, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+    g.screen = pygame.display.set_mode(WINDOW_SIZE, pygame.OPENGL | pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.FULLSCREEN)
     
     g.board = classes.Board()
 
