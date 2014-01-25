@@ -206,9 +206,9 @@ def new_game():
     global width, height
 
     parser = argparse.ArgumentParser(description='Langton\'s Ant')
-    parser.add_argument('-r','--rows', help='Number of rows', type=int, required=True)
-    parser.add_argument('-c','--columns', help='Number of columns', type=int, required=True)
-    parser.add_argument('-l','--length', help='Length of square\'s side', type=int, required=True)
+    parser.add_argument('-r','--rows', help='Number of rows', type=int, required=False)
+    parser.add_argument('-c','--columns', help='Number of columns', type=int, required=False)
+    parser.add_argument('-l','--length', help='Side length of square\'s side', type=int, required=False)
     parser.add_argument('-x','--startx', help='Starting x-position', type=int, required=False)
     parser.add_argument('-y','--starty', help='Starting y-position', type=int, required=False)
     args = vars(parser.parse_args())
@@ -225,10 +225,18 @@ def new_game():
     if args['starty'] and not args['startx']:
         parser.error( '-x is required when -y is set.')
 
-    if startx > num_cols-1:
+    if startx and startx > num_cols-1:
         parser.error('Starting x-position must be between 0 and ' + str(num_cols-1))
-    if starty > num_rows-1:
+    if starty and starty > num_rows-1:
         parser.error('Starting y-position must be between 0 and ' + str(num_rows-1))
+
+    while num_rows == None:
+        num_rows = input("Number of rows?\n")
+    while num_cols == None:
+        num_cols = input("Number of columns?\n")
+    while width == None:
+        width = input("Side length of square?\n")
+        height = width
 
     size = (num_rows,num_cols)
 
