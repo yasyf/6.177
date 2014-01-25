@@ -129,10 +129,15 @@ class Actor(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
 class PacMan(Actor):
-    images
+    transformations = ["PacMan.png","PacMan2.png"]
     def __init__(self):
-        super(PacMan, self).__init__("PacMan.gif")
+        self.img = "PacMan.png"
+        super(PacMan, self).__init__(self.img)
         self.rotation = (1, 0) #pointing right
         self.goto(0,0)
+
+    def update(self):
+        self.img = PacMan.transformations[(PacMan.transformations.index(self.img)-1) % len(PacMan.transformations)]
+        self.set_image(self.img)
 
 

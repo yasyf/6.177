@@ -37,7 +37,10 @@ def main_loop():
                 helpers.check_keydown(event)
 
         if g.stop == False and g.board.paused == False: 
-            g.clock.tick(10)
-            ##
+            g.clock.tick(4)
+
+            g.board.pacmanObject.update()
+
+            g.board.reprint_all()
             pygame.display.flip()
             
