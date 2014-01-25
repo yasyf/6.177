@@ -129,8 +129,9 @@ class Actor(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
 class PacMan(Actor):
+    images
     def __init__(self):
-        super(PacMan, self).__init__("PacMan.png")
+        super(PacMan, self).__init__("PacMan.gif")
         self.rotation = (1, 0) #pointing right
         self.goto(0,0)
 
