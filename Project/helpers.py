@@ -14,3 +14,14 @@ def get_col_left_p(col):
     column col, given the column width.
     """
     return (col * WIDTH) + OFFSET
+
+def check_keydown(event):
+    if event.key==pygame.K_p:
+        if g.board.paused:
+            g.board.paused = False
+        else:
+            g.board.paused = True
+        g.board.reprint_all()
+    elif event.key==pygame.K_q:
+        g.stop = True
+        pygame.quit()

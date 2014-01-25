@@ -33,7 +33,7 @@ class Board:
         
         for row in range(ROWS):
             for column in range(COLS):
-                s = Square(row,column,WHITE)
+                s = Square(row,column,BLACK)
                 self.squareObjects[(column,row)] = s
                 self.squareSprites.add(s)
 
@@ -68,14 +68,18 @@ class Board:
         """
         for square in range(COLS+1):
             #vertical lines
-            start_pos = (helpers.get_col_left_p(square),get_row_top_loc(0))
-            end_pos = (helpers.get_col_left_p(square),get_row_top_loc(size[0]))
-            pygame.draw.line(g.screen,BLACK,start_pos,end_pos)
+            start_pos = (helpers.get_col_left_p(square),helpers.get_row_top_p(0))
+            end_pos = (helpers.get_col_left_p(square),helpers.get_row_top_p(ROWS))
+            pygame.draw.line(g.screen,WHITE,start_pos,end_pos)
         for square in range(ROWS+1):
             #horizontal lines
-            start_pos = (helpers.get_col_left_p(0),get_row_top_loc(square))
-            end_pos = (helpers.get_col_left_p(size[1]),get_row_top_loc(square))
+            start_pos = (helpers.get_col_left_p(0),helpers.get_row_top_p(square))
+            end_pos = (helpers.get_col_left_p(COLS),helpers.get_row_top_p(square))
             pygame.draw.line(g.screen,WHITE,start_pos,end_pos)
+
+    def reprint_all(self):
+        self.squareSprites.draw(g.screen)
+        self.draw_grid()
 
 class Actor(pygame.sprite.Sprite):
     transformations = [(0,1), (-1,0), (0,-1), (1,0)] #in order going counterclockwise
@@ -89,8 +93,6 @@ class Actor(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.rotation = (0, 1) #pointing up
-
-        self.goto(0,0)
         
     def goto(self, col, row):
         self.col = col
@@ -129,5 +131,6 @@ class PacMan(Actor):
     def __init__(self):
         super(PacMan, self).__init__("PacMan.png")
         self.rotation = (1, 0) #pointing right
+        self.goto(0,0)
 
 

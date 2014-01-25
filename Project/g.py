@@ -4,3 +4,5 @@ import pygame
 screen = None
 board = None
 clock = None
+
+stop = False
