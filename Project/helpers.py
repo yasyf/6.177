@@ -6,7 +6,7 @@ def get_row_top_p(row):
     Returns the location of the top pixel in a square in
     row row, given the row height.
     """
-    return (row * HEIGHT) + OFFSET
+    return (row * HEIGHT) + OFFSET + MARGIN_TOP
 
 def get_col_left_p(col):
     """

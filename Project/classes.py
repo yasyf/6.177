@@ -80,6 +80,7 @@ class Board:
     def reprint_all(self):
         self.squareSprites.draw(g.screen)
         self.draw_grid()
+        self.pacmanSprite.draw(g.screen)
 
 class Actor(pygame.sprite.Sprite):
     transformations = [(0,1), (-1,0), (0,-1), (1,0)] #in order going counterclockwise
