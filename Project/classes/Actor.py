@@ -10,6 +10,8 @@ class Actor(pygame.sprite.Sprite):
         self.width = width
         self.height = height
 
+        self._count = 0
+
         self.rotation = (0, 1) #pointing up
         self.degrees = 0 #pointing up
 
@@ -50,3 +52,13 @@ class Actor(pygame.sprite.Sprite):
     def change_dir(self, direction):
         self.rotation = dict(zip(["up","left","down","right"],Actor.directions))[direction]
         self.degrees = math.degrees(math.atan2(self.rotation[1],self.rotation[0]))
+
+    def animate(self):
+        if self._count < ANIMATION_DELAY:
+            self._count += 1
+        else:
+            self._count = 0
+            self.update()
+            self.step_forward()
+
+

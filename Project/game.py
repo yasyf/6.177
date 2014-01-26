@@ -37,11 +37,10 @@ def main_loop():
                 helpers.check_keydown(event)
 
         if g.stop == False and g.board.paused == False: 
-            g.clock.tick(50)
+            g.clock.tick(FRAMERATE)
             g.screen.fill(BLACK) #clear screen
-            g.board.pacmanObject.update() #update pacman animation
-            map(lambda x: x.update(),g.board.ghostObjects.values()) #update ghost animation
-            g.board.pacmanObject.step_forward() #move pacman forward
+            map(lambda x: x.animate(),g.board.ghostObjects.values()) #update ghost animation and move forward
+            g.board.pacmanObject.animate() #move pacman forward and play animation
             g.board.reprint_all() #redraw all sprites
             pygame.display.flip() #flush to screen
             
