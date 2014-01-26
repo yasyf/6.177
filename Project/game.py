@@ -37,10 +37,12 @@ def main_loop():
                 helpers.check_keydown(event)
 
         if g.stop == False and g.board.paused == False: 
-            g.clock.tick(4)
+            g.clock.tick(5)
 
             g.board.pacmanObject.update()
             map(lambda x: x.update(),g.board.ghostObjects.values())
+
+            g.board.pacmanObject.step_forward()
 
             g.board.reprint_all()
             pygame.display.flip()

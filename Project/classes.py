@@ -1,6 +1,6 @@
 from constants import *
 from imports import *
-import helpers, path, itertools
+import helpers, path, itertools, math
 
 class Square(pygame.sprite.Sprite):
     def __init__(self, col, row, color):
@@ -103,7 +103,8 @@ class Board:
     def draw_path(self):
         for k,v in self.path_raw.iteritems():
             for p in v:
-                s = Square(p[0],p[1],k)
+                #s = Square(p[0],p[1],k)
+                s = Square(p[0],p[1],WHITE)
                 self.pathObjects[(p[0],p[1])] = s
                 self.pathSprites.add(s)
 
@@ -119,59 +120,58 @@ class Board:
     def reprint_all(self):
         self.squareSprites.draw(g.screen)
         self.pathSprites.draw(g.screen)
-        self.draw_grid()
+        #self.draw_grid()
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
 
 class Actor(pygame.sprite.Sprite):
-    transformations = [(0,1), (-1,0), (0,-1), (1,0)] #in order going counterclockwise
+    directions = [(0,1), (-1,0), (0,-1), (1,0)] #in order going counterclockwise
     def __init__(self, imageFile, width=WIDTH, height=HEIGHT):
         pygame.sprite.Sprite.__init__(self)
 
         self.width = width
         self.height = height
 
+        self.rotation = (0, 1) #pointing up
+        self.degrees = 0 #pointing up
+
         self.set_image(imageFile)
         self.rect = self.image.get_rect()
-
-        self.rotation = (0, 1) #pointing up
         
     def goto(self, col, row):
-        self.col = col
-        self.row = row
+        if g.board and (col,row) not in g.board.path:
+            return
+        if col < COLS:
+            self.col = col
+        if row < ROWS:
+            self.row = row
         self.rect.x = helpers.get_col_left_p(self.col)
         self.rect.y = helpers.get_row_top_p(self.row)
 
     def get_current_square(self):
         return g.board.get_square(self.col,self.row)
-        
-    def rotate_left(self):
-        """
-        Rotate 90 degrees counterclockwise
-        """
-        self.image = pygame.transform.rotate(self.image, 360/len(Actor.transformations))
-        self.rotation = Actor.transformations[(Actor.transformations.index(self.rotation)+1) % len(Actor.transformations)] #next step in transformations
-
-    def rotate_right(self):
-        """
-        Rotate 90 degrees clockwise
-        """
-        self.image = pygame.transform.rotate(self.image,-360/len(Actor.transformations))
-        self.rotation = Actor.transformations[(Actor.transformations.index(self.rotation)-1) % len(Actor.transformations)] #previous step in transformations
     
     def step_forward(self):
         """
         Step forward in current direction
         """
-        self.goto(self.rotation[0],-self.rotation[1])
+        self.goto(self.col+self.rotation[0],self.row-self.rotation[1])
 
     def set_image(self, imageFile):
         self.image = pygame.image.load("assets/"+imageFile).convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
+        if self.degrees == 180:
+            self.image = pygame.transform.flip(self.image,True,False)
+        else:
+            self.image = pygame.transform.rotate(self.image,self.degrees)
 
     def update(self):
         self.img = self.transformations[(self.transformations.index(self.img)-1) % len(self.transformations)]
         self.set_image(self.img)
+
+    def change_dir(self, direction):
+        self.rotation = dict(zip(["up","left","down","right"],Actor.directions))[direction]
+        self.degrees = math.degrees(math.atan2(self.rotation[1],self.rotation[0]))
 
 class PacMan(Actor):
     def __init__(self,p):
@@ -179,6 +179,7 @@ class PacMan(Actor):
         self.transformations = ["PacMan-{0}.png".format(x) for x in range(2)]
         super(PacMan, self).__init__(self.img)
         self.rotation = (1, 0) #pointing right
+        self.degrees = 0 #pointing right
         self.goto(p[0],p[1])
 
 
@@ -189,6 +190,7 @@ class Ghost(Actor):
         self.transformations = ["{0}Ghost-{1}.png".format(self.color,x) for x in range(5)]
         super(Ghost, self).__init__(self.img)
         self.rotation = (1, 0) #pointing right
+        self.degrees = 0 #pointing right
         self.goto(p[0],p[1])
 
 
