@@ -1,1 +1,2 @@
-import g, pygame, classes
+import g, pygame
+from classes import *

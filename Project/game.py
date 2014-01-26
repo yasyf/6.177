@@ -13,7 +13,7 @@ def new_game():
 
     g.screen = pygame.display.set_mode(WINDOW_SIZE, pygame.RESIZABLE)
     
-    g.board = classes.Board()
+    g.board = Board.Board()
 
     g.clock = pygame.time.Clock()
 
@@ -37,13 +37,11 @@ def main_loop():
                 helpers.check_keydown(event)
 
         if g.stop == False and g.board.paused == False: 
-            g.clock.tick(5)
-
-            g.board.pacmanObject.update()
-            map(lambda x: x.update(),g.board.ghostObjects.values())
-
-            g.board.pacmanObject.step_forward()
-
-            g.board.reprint_all()
-            pygame.display.flip()
+            g.clock.tick(50)
+            g.screen.fill(BLACK) #clear screen
+            g.board.pacmanObject.update() #update pacman animation
+            map(lambda x: x.update(),g.board.ghostObjects.values()) #update ghost animation
+            g.board.pacmanObject.step_forward() #move pacman forward
+            g.board.reprint_all() #redraw all sprites
+            pygame.display.flip() #flush to screen
             
