@@ -1,9 +1,9 @@
 from constants import *
 from imports import *
-import helpers
+import helpers, path, itertools
 
 class Square(pygame.sprite.Sprite):
-    def __init__(self, row, col, color):
+    def __init__(self, col, row, color):
         pygame.sprite.Sprite.__init__(self)
 
         self.color = color
@@ -26,19 +26,22 @@ class Board:
     def __init__(self):
 
         self.paused = False
-        
+        self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.gen_random_path(), RED: path.gen_closest_wall_path(g.current)}
+        self.path = list(set(itertools.chain(*self.path_raw.values())))
         #initialize and populate Squares
         self.squareSprites = pygame.sprite.RenderPlain()
         self.squareObjects = {}
-        
-        for row in range(ROWS):
-            for column in range(COLS):
-                s = Square(row,column,BLACK)
-                self.squareObjects[(column,row)] = s
-                self.squareSprites.add(s)
+
+        self.draw_squares()
+
+        #initialize and populate Path
+        self.pathSprites = pygame.sprite.RenderPlain()
+        self.pathObjects = {}
+
+        self.draw_path()
 
         #initialize and populate PacMan
-        self.pacmanObject = PacMan()
+        self.pacmanObject = PacMan(self.path[len(self.path)/2])
                           
         self.pacmanSprite = pygame.sprite.GroupSingle()
         self.pacmanSprite.add(self.pacmanObject)
@@ -62,6 +65,13 @@ class Board:
         square = self.pacmanObject.get_current_square()
         return square
 
+    def draw_squares(self):
+        for row in range(ROWS):
+            for column in range(COLS):
+                s = Square(column,row,BLACK)
+                self.squareObjects[(column,row)] = s
+                self.squareSprites.add(s)
+
     def draw_grid(self):
         """
         Draw the border grid on the screen.
@@ -77,8 +87,16 @@ class Board:
             end_pos = (helpers.get_col_left_p(COLS),helpers.get_row_top_p(square))
             pygame.draw.line(g.screen,WHITE,start_pos,end_pos)
 
+    def draw_path(self):
+        for k,v in self.path_raw.iteritems():
+            for p in v:
+                s = Square(p[0],p[1],k)
+                self.pathObjects[(p[0],p[1])] = s
+                self.pathSprites.add(s)
+
     def reprint_all(self):
         self.squareSprites.draw(g.screen)
+        self.pathSprites.draw(g.screen)
         self.draw_grid()
         self.pacmanSprite.draw(g.screen)
 
@@ -130,11 +148,11 @@ class Actor(pygame.sprite.Sprite):
 
 class PacMan(Actor):
     transformations = ["PacMan.png","PacMan2.png"]
-    def __init__(self):
+    def __init__(self,p):
         self.img = "PacMan.png"
         super(PacMan, self).__init__(self.img)
         self.rotation = (1, 0) #pointing right
-        self.goto(0,0)
+        self.goto(p[0],p[1])
 
     def update(self):
         self.img = PacMan.transformations[(PacMan.transformations.index(self.img)-1) % len(PacMan.transformations)]

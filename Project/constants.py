@@ -7,7 +7,7 @@ RED   = (255, 0, 0)
 BLUE  = (0, 0, 255)
 
 #Square
-HEIGHT = 100
+HEIGHT = 30
 WIDTH = HEIGHT
 
 #Border
@@ -15,7 +15,7 @@ OFFSET = 30
 MARGIN_TOP = 10
 
 #Board
-ROWS = 10
-COLS = 10
+ROWS = 50
+COLS = 50
 
 WINDOW_SIZE = ((COLS * WIDTH) + 2*OFFSET, (ROWS * HEIGHT) + 2*OFFSET)
