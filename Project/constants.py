@@ -17,8 +17,9 @@ MARGIN_TOP = 10
 #Board
 ROWS = 50
 COLS = 50
+CARDINALS = ["up","left","down","right"]
 
 #window
 WINDOW_SIZE = ((COLS * WIDTH) + 2 * OFFSET, (ROWS * HEIGHT) + 2 * OFFSET)
 FRAMERATE = 50
-ANIMATION_DELAY = 5
+ANIMATION_DELAY = 6

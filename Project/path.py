@@ -33,7 +33,8 @@ def get_surrounding_squares_y(p):
     return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
 
 def get_surrounding_squares(p):
-    return get_surrounding_squares_x(p) + get_surrounding_squares_y(p)
+    surrounding = [(0,1), (-1,0), (0,-1), (1,0)]
+    return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
 
 def gen_skeleton_path():
     path_squares = []

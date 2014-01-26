@@ -1,6 +1,6 @@
 from constants import *
 from imports import *
-import helpers, path, itertools, Square, PacMan, Ghost
+import helpers, path, itertools, Square, PacMan, Ghost, Actor
 
 class Board:
     def __init__(self):
@@ -92,8 +92,8 @@ class Board:
         colors = ["Red","Pink","Orange","Blue"]
         squares = path.get_surrounding_squares((COLS/2,ROWS/2))
 
-        for pair in zip(colors,squares):
-            ghost = Ghost.Ghost(pair[1],pair[0])
+        for pair in zip(colors,squares,CARDINALS):
+            ghost = Ghost.Ghost(pair[1],pair[0],pair[2])
             self.ghostObjects[pair[1]] = ghost
             self.ghostSprites.add(ghost)
 
