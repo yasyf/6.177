@@ -43,6 +43,19 @@ def gen_skeleton_path():
     path_squares += [(ROWS/2,x) for x in range(COLS)]
     path_squares += [(y,COLS/2) for y in range(ROWS)]
 
+    for i in range(random.randint(1,3)):
+        y = random.randint(1,2)*random.randint(2,(ROWS/2)-2)
+        if random.randint(0,1) == 0:
+            path_squares += [(x,y) for x in range(COLS/2)]
+        else:
+            path_squares += [(x,y) for x in range(COLS/2,COLS)]
+    for i in range(random.randint(1,3)):
+        x = random.randint(1,2)*random.randint(2,(COLS/2)-2)
+        if random.randint(0,1) == 0:
+            path_squares += [(x,y) for y in range(ROWS/2)]
+        else:
+            path_squares += [(x,y) for y in range(ROWS/2,ROWS)]
+
     return path_squares
 
 
@@ -72,10 +85,10 @@ def away_from_wall(p):
 
     return direction 
 
-def gen_random_path(_die):
+def gen_connecting_path(_die):
     circled = False
     current = (random.randint(COLS/5,(4*COLS)/5),random.randint(ROWS/5,(4*ROWS)/5))
-    g.endpoints.append(current)
+    g.endpoints = [current]
     last_inc = 0
     path_squares = [current]
     for x in range(500):
@@ -112,16 +125,10 @@ def gen_random_path(_die):
             y_surrounding = list(set(path_squares) & set(get_surrounding_squares_y(temp)))
 
             if (len(x_surrounding) + len(y_surrounding)) > 2:
-                afw = away_from_wall(temp)
-                x_inc = afw[0]
-                y_inc = afw[1]
-
-            temp = (current[0]+x_inc,current[1]+y_inc)
-
-            if (len(x_surrounding) + len(y_surrounding)) > 3:
                 done = False
                 continue
-            elif len(x_surrounding) > 1:
+
+            if len(x_surrounding) > 1:
                 x_inc = 0
                 y_inc = -1 if random.randint(0,1) == 0 else 1
             elif len(y_surrounding) > 1:

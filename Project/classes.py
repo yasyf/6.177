@@ -47,9 +47,9 @@ class Board:
 
 
     def set_path(self):
-        self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_random_path), RED: []}
+        self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_connecting_path), RED: []}
         while self.path_raw[GREEN] == None:
-            self.path_raw[GREEN] = path.timeout(path.gen_random_path)
+            self.path_raw[GREEN] = path.timeout(path.gen_connecting_path)
         for p in g.endpoints:
             self.path_raw[RED] += path.gen_closest_wall_path(p)
         self.path = list(set(itertools.chain(*self.path_raw.values())))
