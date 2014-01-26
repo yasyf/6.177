@@ -40,6 +40,7 @@ def main_loop():
             g.clock.tick(4)
 
             g.board.pacmanObject.update()
+            map(lambda x: x.update(),g.board.ghostObjects.values())
 
             g.board.reprint_all()
             pygame.display.flip()

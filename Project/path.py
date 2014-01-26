@@ -32,6 +32,9 @@ def get_surrounding_squares_y(p):
     surrounding = [(0,1), (0,-1)]
     return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
 
+def get_surrounding_squares(p):
+    return get_surrounding_squares_x(p) + get_surrounding_squares_y(p)
+
 def gen_skeleton_path():
     path_squares = []
 
@@ -44,13 +47,17 @@ def gen_skeleton_path():
     path_squares += [(y,COLS/2) for y in range(ROWS)]
 
     for i in range(random.randint(1,3)):
-        y = random.randint(1,2)*random.randint(2,(ROWS/2)-2)
+        y = random.randint(1,2)*random.randint(1,(ROWS/2)-1)
+        if y in [(ROWS/2)-1,ROWS/2,(ROWS/2)+1,ROWS-2]:
+            continue
         if random.randint(0,1) == 0:
             path_squares += [(x,y) for x in range(COLS/2)]
         else:
             path_squares += [(x,y) for x in range(COLS/2,COLS)]
     for i in range(random.randint(1,3)):
-        x = random.randint(1,2)*random.randint(2,(COLS/2)-2)
+        x = random.randint(1,2)*random.randint(1,(COLS/2)-1)
+        if x in [(COLS/2)-1,COLS/2,(COLS/2)+1,COLS-2]:
+            continue
         if random.randint(0,1) == 0:
             path_squares += [(x,y) for y in range(ROWS/2)]
         else:

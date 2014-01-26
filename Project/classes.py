@@ -45,6 +45,11 @@ class Board:
         self.pacmanSprite = pygame.sprite.GroupSingle()
         self.pacmanSprite.add(self.pacmanObject)
 
+        self.ghostSprites = pygame.sprite.RenderPlain()
+        self.ghostObjects = {}
+
+        self.add_ghosts()
+
 
     def set_path(self):
         self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_connecting_path), RED: []}
@@ -102,11 +107,21 @@ class Board:
                 self.pathObjects[(p[0],p[1])] = s
                 self.pathSprites.add(s)
 
+    def add_ghosts(self):
+        colors = ["Red","Pink","Orange","Blue"]
+        squares = path.get_surrounding_squares((COLS/2,ROWS/2))
+
+        for pair in zip(colors,squares):
+            ghost = Ghost(pair[1],pair[0])
+            self.ghostObjects[pair[1]] = ghost
+            self.ghostSprites.add(ghost)
+
     def reprint_all(self):
         self.squareSprites.draw(g.screen)
         self.pathSprites.draw(g.screen)
         self.draw_grid()
         self.pacmanSprite.draw(g.screen)
+        self.ghostSprites.draw(g.screen)
 
 class Actor(pygame.sprite.Sprite):
     transformations = [(0,1), (-1,0), (0,-1), (1,0)] #in order going counterclockwise
@@ -154,16 +169,28 @@ class Actor(pygame.sprite.Sprite):
         self.image = pygame.image.load("assets/"+imageFile).convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
+    def update(self):
+        self.img = self.transformations[(self.transformations.index(self.img)-1) % len(self.transformations)]
+        self.set_image(self.img)
+
 class PacMan(Actor):
-    transformations = ["PacMan.png","PacMan2.png"]
     def __init__(self,p):
-        self.img = "PacMan.png"
+        self.img = "PacMan-0.png"
+        self.transformations = ["PacMan-{0}.png".format(x) for x in range(2)]
         super(PacMan, self).__init__(self.img)
         self.rotation = (1, 0) #pointing right
         self.goto(p[0],p[1])
 
-    def update(self):
-        self.img = PacMan.transformations[(PacMan.transformations.index(self.img)-1) % len(PacMan.transformations)]
-        self.set_image(self.img)
+
+class Ghost(Actor):
+    def __init__(self,p,color):
+        self.img = "{0}Ghost-0.png".format(color)
+        self.color = color
+        self.transformations = ["{0}Ghost-{1}.png".format(self.color,x) for x in range(5)]
+        super(Ghost, self).__init__(self.img)
+        self.rotation = (1, 0) #pointing right
+        self.goto(p[0],p[1])
+
+
 
 
