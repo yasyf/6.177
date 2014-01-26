@@ -6,4 +6,4 @@ board = None
 clock = None
 stop = False
 
-current = None
+endpoints = []

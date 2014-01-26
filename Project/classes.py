@@ -26,12 +26,7 @@ class Board:
     def __init__(self):
 
         self.paused = False
-        self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_random_path)}
-        while self.path_raw[GREEN] == None:
-            print "call"
-            self.path_raw[GREEN] = path.timeout(path.gen_random_path)
-        self.path_raw[RED] = path.gen_closest_wall_path(g.current)
-        self.path = list(set(itertools.chain(*self.path_raw.values())))
+        self.set_path()
         #initialize and populate Squares
         self.squareSprites = pygame.sprite.RenderPlain()
         self.squareObjects = {}
@@ -49,6 +44,15 @@ class Board:
                           
         self.pacmanSprite = pygame.sprite.GroupSingle()
         self.pacmanSprite.add(self.pacmanObject)
+
+
+    def set_path(self):
+        self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_random_path), RED: []}
+        while self.path_raw[GREEN] == None:
+            self.path_raw[GREEN] = path.timeout(path.gen_random_path)
+        for p in g.endpoints:
+            self.path_raw[RED] += path.gen_closest_wall_path(p)
+        self.path = list(set(itertools.chain(*self.path_raw.values())))
 
     def get_square(self, x, y):
         """

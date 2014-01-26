@@ -2,7 +2,7 @@ from constants import *
 from imports import *
 import random, threading
 
-def timeout(func, timeout_duration=1, default=None, *args, **kwargs):
+def timeout(func, timeout_duration=0.1, default=None, *args, **kwargs):
     """This function will spawn a thread and run the given function
     using the args, kwargs and return the given default value if the
     timeout_duration is exceeded.
@@ -74,9 +74,10 @@ def away_from_wall(p):
 
 def gen_random_path(_die):
     circled = False
-    current = (2,2)
+    current = (random.randint(COLS/5,(4*COLS)/5),random.randint(ROWS/5,(4*ROWS)/5))
+    g.endpoints.append(current)
     last_inc = 0
-    path_squares = [(1,2),current]
+    path_squares = [current]
     for x in range(500):
         done = False
 
@@ -156,5 +157,5 @@ def gen_random_path(_die):
         last_inc = abs(y_inc)  
         current = temp
         path_squares.append(current)
-    g.current = current
+    g.endpoints.append(current)
     return path_squares
