@@ -1,6 +1,28 @@
 from constants import *
 from imports import *
-import random
+import random, threading
+
+def timeout(func, timeout_duration=1, default=None, *args, **kwargs):
+    """This function will spawn a thread and run the given function
+    using the args, kwargs and return the given default value if the
+    timeout_duration is exceeded.
+    http://stackoverflow.com/questions/492519/timeout-on-a-python-function-call/494273#494273
+    """ 
+    class InterruptableThread(threading.Thread):
+        def __init__(self):
+            threading.Thread.__init__(self)
+            self.result = default
+            self._die = threading.Event()
+        def run(self):
+            self.result = func(self._die, *args, **kwargs)
+        def kill(self):
+            self._die.set()
+    it = InterruptableThread()
+    it.start()
+    it.join(timeout_duration)
+    if it.isAlive():
+        it.kill()
+    return it.result
 
 def get_surrounding_squares_x(p):
     surrounding = [(-1,0), (1,0)]
@@ -28,49 +50,84 @@ def point_to_vector(p,magnitude,direction):
     path_squares = [(p[0]+(direction[0]*z),p[1]+(direction[1]*z)) for z in range(1,magnitude+1)]
     return path_squares
 
-
-def gen_closest_wall_path(p):
+def get_directions(p):
     directions = {}
     directions[p[1]] = (0,-1) #up
     directions[ROWS-1-p[1]] = (0,1) #down
     directions[p[0]] = (-1,0) #left
     directions[COLS-1-p[0]] = (1,0) #right
+    return directions
 
+def gen_closest_wall_path(p):
+    directions = get_directions(p)
     magnitude = min(directions.keys())
     direction = directions[magnitude]
 
     return point_to_vector(p,magnitude,direction)
 
+def away_from_wall(p):
+    directions = get_directions(p)
+    magnitude = max(directions.keys())
+    direction = directions[magnitude]
 
+    return direction 
 
-def gen_random_path():
+def gen_random_path(_die):
     circled = False
     current = (2,2)
     last_inc = 0
     path_squares = [(1,2),current]
-    for x in range(400):
+    for x in range(500):
         done = False
 
-        while done == False:
+        while done == False and not _die.is_set():
+            temp = current
             x_inc, y_inc = [0,0]
 
             x_inc = random.randint(0,1)
             y_inc = x_inc^1
 
-            if x_inc == 1 and last_inc != 0:
-                x_inc *= -1 if random.randint(0,1) == 0 else 1
-            elif y_inc == 1 and last_inc != 1:
-                y_inc *= -1 if random.randint(0,1) == 0 else 1
+            seed = random.randint(0,5)
+
+            if seed < 3:
+                if x_inc == 1 and last_inc != 0:
+                    x_inc *= -1 if random.randint(0,5) == 0 else 1
+                elif y_inc == 1 and last_inc != 1:
+                    y_inc *= -1 if random.randint(0,5) == 0 else 1
+            elif seed < 5:
+                if x_inc == 1 and last_inc != 0:
+                    x_inc *= -1 if random.randint(0,3) == 0 else 1
+                elif y_inc == 1 and last_inc != 1:
+                    y_inc *= -1 if random.randint(0,2) == 0 else 1
+            else:
+                if x_inc == 1 and last_inc != 0:
+                    x_inc *= -1 if random.randint(0,1) == 0 else 1
+                elif y_inc == 1 and last_inc != 1:
+                    y_inc *= -1 if random.randint(0,2) == 0 else 1
 
             temp = (current[0]+x_inc,current[1]+y_inc)
 
-            x_surrounding = len(set(path_squares) & set(get_surrounding_squares_x(temp)))
-            y_surrounding = len(set(path_squares) & set(get_surrounding_squares_y(temp)))
+            x_surrounding = list(set(path_squares) & set(get_surrounding_squares_x(temp)))
+            y_surrounding = list(set(path_squares) & set(get_surrounding_squares_y(temp)))
 
-            if x_surrounding > 1 or y_surrounding > 1 or (x_surrounding+y_surrounding > 3 and x != ROWS/2 and y != COLS/2):
-                #TODO Force one direction to prevent square loop/getting stuck
+            if (len(x_surrounding) + len(y_surrounding)) > 2:
+                afw = away_from_wall(temp)
+                x_inc = afw[0]
+                y_inc = afw[1]
+
+            temp = (current[0]+x_inc,current[1]+y_inc)
+
+            if (len(x_surrounding) + len(y_surrounding)) > 3:
                 done = False
-                continue 
+                continue
+            elif len(x_surrounding) > 1:
+                x_inc = 0
+                y_inc = -1 if random.randint(0,1) == 0 else 1
+            elif len(y_surrounding) > 1:
+                y_inc = 0
+                x_inc = -1 if random.randint(0,1) == 0 else 1
+
+            temp = (current[0]+x_inc,current[1]+y_inc)
 
             if (temp[0] > (COLS-1)) or (temp[0] < 0):
                 done = True
@@ -80,6 +137,8 @@ def gen_random_path():
                     y_inc = y_inc % (ROWS-1)
                 temp = (0,current[1]+y_inc)
                 continue 
+
+            temp = (current[0]+x_inc,current[1]+y_inc)
 
             if (temp[1] > (ROWS-1))  or (temp[1] < 0):
                 done = True

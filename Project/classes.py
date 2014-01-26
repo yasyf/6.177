@@ -26,7 +26,11 @@ class Board:
     def __init__(self):
 
         self.paused = False
-        self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.gen_random_path(), RED: path.gen_closest_wall_path(g.current)}
+        self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_random_path)}
+        while self.path_raw[GREEN] == None:
+            print "call"
+            self.path_raw[GREEN] = path.timeout(path.gen_random_path)
+        self.path_raw[RED] = path.gen_closest_wall_path(g.current)
         self.path = list(set(itertools.chain(*self.path_raw.values())))
         #initialize and populate Squares
         self.squareSprites = pygame.sprite.RenderPlain()
