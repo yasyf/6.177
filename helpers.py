@@ -32,7 +32,7 @@ def check_keydown(event):
         elif event.key == pygame.K_q:
             g.stop = True
             pygame.quit()
-        elif g.handled_direction == False:
+        elif g.handled_direction == False and g.board.paused == False:
             if event.key == pygame.K_RIGHT:
                 g.board.pacmanObject.change_dir("right")
             elif event.key == pygame.K_LEFT:

@@ -1,6 +1,6 @@
 from constants import *
 from imports import *
-import helpers
+import helpers, time
 
 def new_game():
     """
@@ -25,6 +25,7 @@ def new_game():
     g.board = Board.Board()
 
     g.clock = pygame.time.Clock()
+    g.clock.tick(FRAMERATE)
 
     g.start = pygame.time.get_ticks()
 
@@ -41,7 +42,13 @@ def setup():
 def main_loop():
     g.stop = False
     pause_rect = pygame.Rect(4*TEXT_OFFSET_X - g.font.size("Pause")[0], TEXT_OFFSET_Y, g.font.size("Pause")[0], g.font.size("Pause")[1])
+    
+    g.board.paused = True
+    g.wait_ticks = FRAMERATE * 4
+    sounds.intro.play()
+
     while g.stop == False:
+        g.clock.tick(FRAMERATE)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 g.stop = True
@@ -54,20 +61,35 @@ def main_loop():
             elif event.type == pygame.KEYDOWN:
                 helpers.check_keydown(event)
         if g.done == True:
-            g.clock.tick(FRAMERATE)
             g.screen.fill(BLACK) #clear screen
             helpers.show_game_over()
             pygame.display.flip() #flush to screen  
+        elif g.board.paused == True and g.wait_ticks > 0:
+            print g.wait_ticks
+            g.wait_ticks -= 1
+            if g.wait_ticks < 1:
+                g.board.paused = False
+                g.wait_ticks = 0
+                sounds.background.loop()
+            if g.played_intro:
+                g.board.pacmanObject.die()
         elif g.stop == False and g.board.paused == False: 
-            g.clock.tick(FRAMERATE)
             g.screen.fill(BLACK) #clear screen
 
             pacman_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.ghostSprites)
             if pacman_collision != None:
-                g.board.pacmanObject.reset()
+                sounds.dot.stop()
+                sounds.background.stop()
+                g.wait_ticks = FRAMERATE
+                g.board.pacmanObject.die()
                 g.lives -= 1
                 if g.lives < 0:
                     g.done = True
+                g.board.reprint_no_ghosts()
+                time.sleep(1)
+                sounds.die.play()
+                g.board.paused = True
+                continue
 
             dot_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.dotSprites)
             if dot_collision != None:

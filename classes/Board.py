@@ -155,3 +155,11 @@ class Board:
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
         self.update_text()
+
+    def reprint_no_ghosts(self):
+        g.screen.fill(BLACK) #clear screen
+        self.squareSprites.draw(g.screen)
+        self.pathSprites.draw(g.screen)
+        self.dotSprites.draw(g.screen)
+        self.pacmanSprite.draw(g.screen)
+        pygame.display.flip()

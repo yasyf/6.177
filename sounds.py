@@ -1,23 +1,27 @@
 import pygame
 
 
-class Dot():
-	def __init__(self):
-		self.options =["assets/Dot.wav".format(x) for x in range(1)]
-		self.snd = self.options[0]
-		self.sound = pygame.mixer.Sound(self.snd)
+class Sound():
+	def __init__(self,fileName,volume=1.0):
+		self.sound = pygame.mixer.Sound(fileName)
+		self.sound.set_volume(volume)
 
 	def play(self):
 		self.stop()
-		self.snd = self.options[(self.options.index(self.snd)-1) % len(self.options)]
-		self.sound = pygame.mixer.Sound(self.snd)
-		pygame.mixer.Sound.play(self.sound)
+		self.sound.play()
 
 	def stop(self):
-		pygame.mixer.Sound.stop(self.sound)
+		self.sound.stop()
+
+	def loop(self):
+		self.stop()
+		self.sound.play(-1)
 
 def init_sounds():
-	global dot
+	global dot, background, die, intro
 
-	dot = Dot()
+	intro = Sound("assets/Intro.wav")
+	dot = Sound("assets/Dot.wav",volume=0.5)
+	die = Sound("assets/Die.wav")
+	background = Sound("assets/Background.wav",volume=0.8)
 	
