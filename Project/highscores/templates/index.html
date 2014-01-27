@@ -1,0 +1,56 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Japanese PacMan Highscores</title>
+<style>
+body
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 45px;
+	text-align: center;
+	border-collapse: collapse;
+}
+h1{
+	font-weight: bold;
+	font-size: 20px;
+	color: #039;
+}
+th
+{
+	padding: 8px 2px;
+	font-weight: normal;
+	font-size: 14px;
+	border-bottom: 2px solid #6678b1;
+	border-right: 30px solid #fff;
+	border-left: 30px solid #fff;
+	color: #039;
+}
+td
+{
+	padding: 12px 2px 0px 2px;
+	border-right: 30px solid #fff;
+	border-left: 30px solid #fff;
+	color: #669;
+}
+</style>
+</head>
+<body>
+	<center>
+		<h1>Japanese PacMan Highscores</h1>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Score</th>
+				<th>Date</th>
+			</tr>
+		{% for score in scores %}
+		    <tr>
+		        <td>{{ score.name }}</td>
+		        <td>{{ score.score }}</td>
+		        <td>{{ score.dt.strftime('%Y-%m-%d') }}</td>
+		    </tr>
+		{% endfor %}
+		 </table>
+	</center>
+</body>
+</html>
