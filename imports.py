@@ -1,2 +1,2 @@
-import g, pygame, random, math
+import g, pygame, random, math, sounds
 from classes import *

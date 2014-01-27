@@ -9,7 +9,11 @@ def new_game():
     g.reset()
 
     pygame.init() # initialize all imported pygame modules
+
+    pygame.mixer.init()
     
+    sounds.init_sounds()
+
     pygame.display.set_caption("Japanese PacMan") # caption sets title of Window 
 
     g.screen = pygame.display.set_mode(WINDOW_SIZE, pygame.RESIZABLE)
@@ -57,8 +61,6 @@ def main_loop():
         elif g.stop == False and g.board.paused == False: 
             g.clock.tick(FRAMERATE)
             g.screen.fill(BLACK) #clear screen
-            map(lambda x: x.animate(),g.board.ghostObjects.values()) #update ghost animation and move forward
-            g.board.pacmanObject.animate() #move pacman forward and play animation
 
             pacman_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.ghostSprites)
             if pacman_collision != None:
@@ -69,6 +71,9 @@ def main_loop():
 
             dot_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.dotSprites)
             if dot_collision != None:
+                g.board.pacmanObject._dot = True
+                g.board.pacmanObject._wasdot = True
+                g.board.pacmanObject.update()
                 del g.board.dotObjects[dot_collision.col, dot_collision.row]
                 g.board.dotSprites.remove(dot_collision)
                 g.score += 1
@@ -76,6 +81,9 @@ def main_loop():
             ghost_collisions = map(lambda x: pygame.sprite.spritecollide(x, g.board.ghostSprites, False, collided=lambda x,y: x.color != y.color and pygame.Rect.colliderect(x.rect, y.rect)),g.board.ghostObjects.values())
             ghost_collisions = filter(None, ghost_collisions)
             helpers.process_ghost_collisions(ghost_collisions)
+
+            map(lambda x: x.animate(),g.board.ghostObjects.values()) #update ghost animation and move forward
+            g.board.pacmanObject.animate() #move pacman forward and play animation
             
             g.board.reprint_all() #redraw all sprites
             g.score += TIME_MULTIPLIER
