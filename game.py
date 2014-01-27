@@ -72,7 +72,6 @@ def main_loop():
             dot_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.dotSprites)
             if dot_collision != None:
                 g.board.pacmanObject._dot = True
-                g.board.pacmanObject._wasdot = True
                 g.board.pacmanObject.update()
                 sounds.dot.play()
                 del g.board.dotObjects[dot_collision.col, dot_collision.row]
