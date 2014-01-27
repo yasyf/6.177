@@ -32,14 +32,15 @@ def check_keydown(event):
         elif event.key == pygame.K_q:
             g.stop = True
             pygame.quit()
-        elif event.key == pygame.K_RIGHT:
-            g.board.pacmanObject.change_dir("right")
-        elif event.key == pygame.K_LEFT:
-            g.board.pacmanObject.change_dir("left")
-        elif event.key == pygame.K_UP:
-            g.board.pacmanObject.change_dir("up")
-        elif event.key == pygame.K_DOWN:
-            g.board.pacmanObject.change_dir("down")
+        elif g.handled_direction == False:
+            if event.key == pygame.K_RIGHT:
+                g.board.pacmanObject.change_dir("right")
+            elif event.key == pygame.K_LEFT:
+                g.board.pacmanObject.change_dir("left")
+            elif event.key == pygame.K_UP:
+                g.board.pacmanObject.change_dir("up")
+            elif event.key == pygame.K_DOWN:
+                g.board.pacmanObject.change_dir("down")
 
 def process_ghost_collisions(ghost_collisions):
     for i in range(0,len(ghost_collisions)-1,2):

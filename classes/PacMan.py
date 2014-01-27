@@ -11,18 +11,21 @@ class PacMan(Actor):
 		self.goto(*p)
 
 	def animate(self):
-		if self._count < self.delay:
-			self._count += 1
-		else:
-			self.update()
-			self.step_forward()
+		if self._count >= self.delay:
+			g.handled_direction = False
 			if self._dot:
 				self._dot = False
+		super(PacMan,self).animate()
 
 	def update(self):
-		self._count = 0
 		if self._dot or self.transformations.index(self.img) > 0:
 			self.img = self.transformations[(self.transformations.index(self.img)-1) % len(self.transformations)]
 		else:
 			self.img = self.transformations[self.transformations.index(self.img)]
 		self.set_image(self.img)
+
+	def change_dir(self, direction):
+		g.handled_direction = True
+		super(PacMan,self).change_dir(direction)
+
+

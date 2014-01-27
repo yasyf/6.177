@@ -15,5 +15,6 @@ def reset():
 	score = 0
 	lives = LIVES
 	path_color = None
+	handled_direction = False
 
 	endpoints = []
