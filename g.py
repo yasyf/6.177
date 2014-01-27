@@ -2,7 +2,7 @@ from constants import *
 import pygame
 
 def reset():
-	global screen, board, clock, stop, done, font, score, lives, path_color, endpoints
+	global screen, board, clock, stop, done, font, score, lives, path_color, endpoints, name
 
 	screen = None
 	board = None
@@ -11,6 +11,7 @@ def reset():
 	done = False
 	font = None
 	score = 0
+	name = ""
 	lives = LIVES
 	path_color = None
 

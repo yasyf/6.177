@@ -43,6 +43,7 @@ class Board:
         pygame.display.flip()
 
     def set_path(self):
+        g.screen.fill(BLACK) #clear screen
         helpers.show_loading()
         pygame.display.flip()
         self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_connecting_path), RED: []}

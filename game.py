@@ -51,6 +51,7 @@ def main_loop():
                 helpers.check_keydown(event)
         if g.done == True:
             g.clock.tick(FRAMERATE)
+            g.screen.fill(BLACK) #clear screen
             helpers.show_game_over()
             pygame.display.flip() #flush to screen  
         elif g.stop == False and g.board.paused == False: 
