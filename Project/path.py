@@ -25,17 +25,17 @@ def timeout(func, timeout_duration=0.1, default=None, *args, **kwargs):
     return it.result
 
 def get_surrounding_squares_x(p):
-    surrounding = [(-1,0), (1,0)]
+    surrounding = [CARDINALS["left"],CARDINALS["right"]]
     return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
 
 def get_surrounding_squares_y(p):
-    surrounding = [(0,1), (0,-1)]
+    surrounding = [CARDINALS["up"],CARDINALS["down"]]
     return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
 
 def get_surrounding_squares(p):
-    surrounding = [(0,1), (-1,0), (0,-1), (1,0)]
+    surrounding = CARDINALS.values()
     return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
-
+    
 def gen_skeleton_path():
     path_squares = []
 
@@ -73,10 +73,10 @@ def point_to_vector(p,magnitude,direction):
 
 def get_directions(p):
     directions = {}
-    directions[p[1]] = (0,-1) #up
-    directions[ROWS-1-p[1]] = (0,1) #down
-    directions[p[0]] = (-1,0) #left
-    directions[COLS-1-p[0]] = (1,0) #right
+    directions[p[1]] = CARDINALS["up"] #up
+    directions[ROWS-1-p[1]] = CARDINALS["down"] #down
+    directions[p[0]] = CARDINALS["left"] #left
+    directions[COLS-1-p[0]] = CARDINALS["right"] #right
     return directions
 
 def gen_closest_wall_path(p):

@@ -17,6 +17,10 @@ def new_game():
 
     g.clock = pygame.time.Clock()
 
+    g.font = pygame.font.SysFont("monospace", FONT_SIZE)
+
+    g.start = pygame.time.get_ticks()
+    
     setup()
 
     main_loop()
@@ -41,6 +45,14 @@ def main_loop():
             g.screen.fill(BLACK) #clear screen
             map(lambda x: x.animate(),g.board.ghostObjects.values()) #update ghost animation and move forward
             g.board.pacmanObject.animate() #move pacman forward and play animation
+
+
+            collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.ghostSprites)
+            if collision != None:
+                g.board.pacmanObject.reset()
+            
+
             g.board.reprint_all() #redraw all sprites
+            g.score += TIME_MULTIPLIER
             pygame.display.flip() #flush to screen
             

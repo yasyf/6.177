@@ -4,7 +4,6 @@ import helpers, path, itertools, Square, PacMan, Ghost, Actor
 
 class Board:
     def __init__(self):
-
         self.paused = False
         self.set_path()
         #initialize and populate Squares
@@ -65,6 +64,14 @@ class Board:
                 self.squareObjects[(column,row)] = s
                 self.squareSprites.add(s)
 
+    def update_text(self):
+        elapsed = g.font.render("Elapsed: %d Seconds" % ((pygame.time.get_ticks() - g.start)/1000),1,WHITE)
+        g.screen.blit(elapsed, (.2*TEXT_OFFSET_X, TEXT_OFFSET_Y))
+        score = g.font.render("Score: "+str(int(g.score)),1,WHITE)
+        g.screen.blit(score, (1.45*TEXT_OFFSET_X, TEXT_OFFSET_Y))
+        score = g.font.render("Pause",1,WHITE)
+        g.screen.blit(score, (2.7*TEXT_OFFSET_X, TEXT_OFFSET_Y))
+
     def draw_grid(self):
         """
         Draw the border grid on the screen.
@@ -85,14 +92,22 @@ class Board:
             for p in v:
                 #s = Square(p[0],p[1],k)
                 s = Square.Square(p[0],p[1],WHITE)
-                self.pathObjects[(p[0],p[1])] = s
+                self.pathObjects[p] = s
                 self.pathSprites.add(s)
+
+    def get_surrounding_path_options(self,p):
+        squares = path.get_surrounding_squares(p)
+        options = dict(zip(squares, CARDINALS.keys()))
+        for k in options.keys():
+            if k not in self.path:
+                del options[k]
+        return options
 
     def add_ghosts(self):
         colors = ["Red","Pink","Orange","Blue"]
         squares = path.get_surrounding_squares((COLS/2,ROWS/2))
 
-        for pair in zip(colors,squares,CARDINALS):
+        for pair in zip(colors,squares,CARDINALS.keys()):
             ghost = Ghost.Ghost(pair[1],pair[0],pair[2])
             self.ghostObjects[pair[1]] = ghost
             self.ghostSprites.add(ghost)
@@ -103,3 +118,4 @@ class Board:
         #self.draw_grid()
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
+        self.update_text()

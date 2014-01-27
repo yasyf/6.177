@@ -17,9 +17,15 @@ MARGIN_TOP = 10
 #Board
 ROWS = 50
 COLS = 50
-CARDINALS = ["up","left","down","right"]
+CARDINALS = {"up": (0,-1), "left": (-1,0), "down": (0,1), "right": (1,0)}
 
 #window
-WINDOW_SIZE = ((COLS * WIDTH) + 2 * OFFSET, (ROWS * HEIGHT) + 2 * OFFSET)
+WINDOW_SIZE = ((COLS * WIDTH) + (2 * OFFSET), (ROWS * HEIGHT) + (4 * OFFSET))
+TEXT_OFFSET_Y = (ROWS * HEIGHT) + (2 * OFFSET)
+TEXT_OFFSET_X = ((COLS * WIDTH)/3)
 FRAMERATE = 50
 ANIMATION_DELAY = 6
+FONT_SIZE = 30
+
+#score
+TIME_MULTIPLIER = 1.0/(FRAMERATE*4)
