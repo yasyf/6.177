@@ -39,3 +39,15 @@ def process_ghost_collisions(ghost_collisions):
             if ghost_collisions[i][0].rotation != ghost_collisions[i+1][0].rotation: #only reverse two ghosts colliding if they are not stuck together
                 ghost_collisions[i][0].reverse_dir()
                 ghost_collisions[i+1][0].reverse_dir()
+
+def show_loading():
+    g.screen.fill(BLACK) #clear screen
+    text = "Loading..."
+    loading = g.font.render(text,1,WHITE)
+    g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 - g.font.size(text)[1]))
+
+def show_game_over():
+    g.screen.fill(BLACK) #clear screen
+    text = "Game Over"
+    game_over = g.font.render(text,1,WHITE)
+    g.screen.blit(game_over,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 - g.font.size(text)[1]))
