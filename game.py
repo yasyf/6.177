@@ -74,6 +74,7 @@ def main_loop():
                 g.board.pacmanObject._dot = True
                 g.board.pacmanObject._wasdot = True
                 g.board.pacmanObject.update()
+                sounds.dot.play()
                 del g.board.dotObjects[dot_collision.col, dot_collision.row]
                 g.board.dotSprites.remove(dot_collision)
                 g.score += 1

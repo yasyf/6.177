@@ -20,7 +20,6 @@ class PacMan(Actor):
 			self.step_forward()
 			if self._dot:
 				self._dot = False
-				sounds.play_dot()
 
 	def update(self):
 		if self._dot or self._wasdot:
