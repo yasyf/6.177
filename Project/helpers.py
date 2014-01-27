@@ -29,3 +29,13 @@ def check_keydown(event):
         g.board.pacmanObject.change_dir("up")
     elif event.key == pygame.K_DOWN:
         g.board.pacmanObject.change_dir("down")
+
+def process_ghost_collisions(ghost_collisions):
+    for i in range(0,len(ghost_collisions)-1,2):
+        if len(ghost_collisions[i]) > 1 or len(ghost_collisions[i+1]) > 1: #if more than two ghosts colliding, reverse all of them
+            for ghost in ghost_collisions[i] + ghost_collisions[i+1]:
+                ghost.reverse_dir()
+        else:
+            if ghost_collisions[i][0].rotation != ghost_collisions[i+1][0].rotation: #only reverse two ghosts colliding if they are not stuck together
+                ghost_collisions[i][0].reverse_dir()
+                ghost_collisions[i+1][0].reverse_dir()

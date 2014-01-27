@@ -53,9 +53,14 @@ def main_loop():
             map(lambda x: x.animate(),g.board.ghostObjects.values()) #update ghost animation and move forward
             g.board.pacmanObject.animate() #move pacman forward and play animation
 
-            collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.ghostSprites)
-            if collision != None:
+            pacman_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.ghostSprites)
+            if pacman_collision != None:
                 g.board.pacmanObject.reset()
+                g.lives -= 1
+
+            ghost_collisions = map(lambda x: pygame.sprite.spritecollide(x, g.board.ghostSprites, False, collided=lambda x,y: x.color != y.color and pygame.Rect.colliderect(x.rect, y.rect)),g.board.ghostObjects.values())
+            ghost_collisions = filter(None, ghost_collisions)
+            helpers.process_ghost_collisions(ghost_collisions)
             
             g.board.reprint_all() #redraw all sprites
             g.score += TIME_MULTIPLIER

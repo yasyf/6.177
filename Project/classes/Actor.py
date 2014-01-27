@@ -12,8 +12,8 @@ class Actor(pygame.sprite.Sprite):
         self._count = 0
         self.delay = ANIMATION_DELAY
 
-        self.rotation = (0, 1) #pointing up
-        self.degrees = 0 #pointing up
+        self.rotation = CARDINALS["right"] #pointing right
+        self.degrees = 0 #pointing right
 
         self.set_image(imageFile)
         self.rect = self.image.get_rect()
@@ -54,6 +54,10 @@ class Actor(pygame.sprite.Sprite):
 
     def change_dir(self, direction):
         self.rotation = CARDINALS[direction]
+        self.degrees = math.degrees(math.atan2(-self.rotation[1],self.rotation[0]))
+
+    def reverse_dir(self):
+        self.rotation = (self.rotation[0] * -1,self.rotation[1] * -1)
         self.degrees = math.degrees(math.atan2(-self.rotation[1],self.rotation[0]))
 
     def animate(self):
