@@ -61,6 +61,9 @@ def show_game_over():
     text = "Game Over"
     game_over = g.font.render(text,1,WHITE)
     g.screen.blit(game_over,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + g.font.size(text)[1]))
+    text = "Score: " + str(g.score)
+    score = g.font.render(text,1,WHITE)
+    g.screen.blit(score,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + FONT_SIZE * 2 + g.font.size(text)[1]))
     text = "Name: " + g.name
     name = g.font.render(text,1,WHITE)
-    g.screen.blit(name,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + FONT_SIZE * 2 + g.font.size(text)[1]))
+    g.screen.blit(name,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + FONT_SIZE * 4 + g.font.size(text)[1]))

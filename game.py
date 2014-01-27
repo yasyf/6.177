@@ -43,6 +43,9 @@ def main_loop():
     g.stop = False
     pause_rect = pygame.Rect(4*TEXT_OFFSET_X - g.font.size("Pause")[0], TEXT_OFFSET_Y, g.font.size("Pause")[0], g.font.size("Pause")[1])
     
+    g.board.pacmanObject.double_size()
+    g.board.reprint_all()
+    pygame.display.flip()
     g.board.paused = True
     g.wait_ticks = FRAMERATE * 4
     sounds.intro.play()
@@ -75,7 +78,7 @@ def main_loop():
             else:
                 if g.wait_ticks < 1:
                     g.played_intro = True
-                    
+
         elif g.stop == False and g.board.paused == False: 
             g.screen.fill(BLACK) #clear screen
 

@@ -33,6 +33,9 @@ class PacMan(Actor):
 		g.handled_direction = True
 		super(PacMan,self).change_dir(direction)
 
+	def double_size(self):
+		self.image = pygame.transform.scale(self.image, (2*self.width, 2*self.height))
+
 	def die(self):
 		if self._die == None and g.wait_ticks > 0:
 			self._die = g.wait_ticks
