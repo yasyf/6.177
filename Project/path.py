@@ -47,7 +47,7 @@ def gen_skeleton_path():
     path_squares += [(ROWS/2,x) for x in range(COLS)]
     path_squares += [(y,COLS/2) for y in range(ROWS)]
 
-    for i in range(random.randint(1,3)):
+    for i in range(random.randint(1,4)):
         y = random.randint(1,2)*random.randint(1,(ROWS/2)-1)
         if y in [(ROWS/2)-1,ROWS/2,(ROWS/2)+1,ROWS-2]:
             continue
@@ -55,7 +55,7 @@ def gen_skeleton_path():
             path_squares += [(x,y) for x in range(COLS/2)]
         else:
             path_squares += [(x,y) for x in range(COLS/2,COLS)]
-    for i in range(random.randint(1,3)):
+    for i in range(random.randint(1,4)):
         x = random.randint(1,2)*random.randint(1,(COLS/2)-1)
         if x in [(COLS/2)-1,COLS/2,(COLS/2)+1,COLS-2]:
             continue

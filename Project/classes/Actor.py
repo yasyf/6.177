@@ -1,6 +1,6 @@
 from constants import *
 from imports import *
-import helpers, path, math
+import helpers, path
 
 class Actor(pygame.sprite.Sprite):
     def __init__(self, imageFile, width=WIDTH, height=HEIGHT):
@@ -54,7 +54,7 @@ class Actor(pygame.sprite.Sprite):
 
     def change_dir(self, direction):
         self.rotation = CARDINALS[direction]
-        self.degrees = math.degrees(math.atan2(self.rotation[1],self.rotation[0]))
+        self.degrees = math.degrees(math.atan2(-self.rotation[1],self.rotation[0]))
 
     def animate(self):
         if self._count < self.delay:

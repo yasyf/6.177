@@ -17,11 +17,7 @@ def get_col_left_p(col):
 
 def check_keydown(event):
     if event.key == pygame.K_p:
-        if g.board.paused:
-            g.board.paused = False
-        else:
-            g.board.paused = True
-        g.board.reprint_all()
+        g.board.toggle_paused()
     elif event.key == pygame.K_q:
         g.stop = True
         pygame.quit()

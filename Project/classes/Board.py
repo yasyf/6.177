@@ -5,6 +5,8 @@ import helpers, path, itertools, Square, PacMan, Ghost, Actor
 class Board:
     def __init__(self):
         self.paused = False
+        self.pausetime = 0
+        self.lastpaused = None
         self.set_path()
         #initialize and populate Squares
         self.squareSprites = pygame.sprite.RenderPlain()
@@ -29,6 +31,16 @@ class Board:
 
         self.add_ghosts()
 
+    def toggle_paused(self):
+        self.paused = not self.paused
+        if self.paused:
+            self.lastpaused = pygame.time.get_ticks()
+        else:
+            self.pausetime += pygame.time.get_ticks() - self.lastpaused
+            self.lastpaused = None
+        g.screen.fill(BLACK)
+        self.reprint_all()
+        pygame.display.flip()
 
     def set_path(self):
         self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_connecting_path), RED: []}
@@ -65,12 +77,21 @@ class Board:
                 self.squareSprites.add(s)
 
     def update_text(self):
-        elapsed = g.font.render("Elapsed: %d Seconds" % ((pygame.time.get_ticks() - g.start)/1000),1,WHITE)
-        g.screen.blit(elapsed, (.2*TEXT_OFFSET_X, TEXT_OFFSET_Y))
-        score = g.font.render("Score: "+str(int(g.score)),1,WHITE)
-        g.screen.blit(score, (1.45*TEXT_OFFSET_X, TEXT_OFFSET_Y))
-        score = g.font.render("Pause",1,WHITE)
-        g.screen.blit(score, (2.7*TEXT_OFFSET_X, TEXT_OFFSET_Y))
+        text = "Elapsed: %d Seconds" % (int((pygame.time.get_ticks() - g.start - self.pausetime)/1000))
+        elapsed = g.font.render(text,1,WHITE)
+        g.screen.blit(elapsed, (1*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
+
+        text = "Score: "+str(int(g.score))
+        score = g.font.render(text,1,WHITE)
+        g.screen.blit(score, (2*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
+
+        text = "Lives: "+str(g.lives)
+        lives = g.font.render(text,1,WHITE)
+        g.screen.blit(lives, (3*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
+
+        text = "Pause" if self.paused is False else "Resume"
+        pause = g.font.render(text,1,WHITE)
+        g.screen.blit(pause, (4*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
 
     def draw_grid(self):
         """
@@ -91,7 +112,7 @@ class Board:
         for k,v in self.path_raw.iteritems():
             for p in v:
                 #s = Square(p[0],p[1],k)
-                s = Square.Square(p[0],p[1],WHITE)
+                s = Square.Square(p[0],p[1],g.path_color)
                 self.pathObjects[p] = s
                 self.pathSprites.add(s)
 

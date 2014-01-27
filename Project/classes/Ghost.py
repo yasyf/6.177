@@ -1,7 +1,6 @@
 from constants import *
 from imports import *
 from Actor import Actor
-import random
 
 class Ghost(Actor):
     def __init__(self,p,color,direction):
@@ -21,7 +20,7 @@ class Ghost(Actor):
     		del options[opposite]
     	if len(options) == 1:
     		self.change_dir(options.values()[0])
-    	elif next_forward in options.keys() and random.randint(0,5) != 0:
+    	elif next_forward in options.keys() and random.randint(0,3) != 0:
     		self.change_dir(options[next_forward])
     	else:
     		self.change_dir(options.values()[random.randint(0,len(options)-1)])

@@ -7,5 +7,7 @@ clock = None
 stop = False
 font = None
 score = 0
+lives = LIVES
+path_color = None
 
 endpoints = []
