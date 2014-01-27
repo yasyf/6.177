@@ -65,7 +65,6 @@ def main_loop():
             helpers.show_game_over()
             pygame.display.flip() #flush to screen  
         elif g.board.paused == True and g.wait_ticks > 0:
-            print g.wait_ticks
             g.wait_ticks -= 1
             if g.wait_ticks < 1:
                 g.board.paused = False
@@ -73,6 +72,10 @@ def main_loop():
                 sounds.background.loop()
             if g.played_intro:
                 g.board.pacmanObject.die()
+            else:
+                if g.wait_ticks < 1:
+                    g.played_intro = True
+                    
         elif g.stop == False and g.board.paused == False: 
             g.screen.fill(BLACK) #clear screen
 
