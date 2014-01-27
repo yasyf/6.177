@@ -67,6 +67,12 @@ def main_loop():
                 if g.lives < 0:
                     g.done = True
 
+            dot_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.dotSprites)
+            if dot_collision != None:
+                del g.board.dotObjects[dot_collision.col, dot_collision.row]
+                g.board.dotSprites.remove(dot_collision)
+                g.score += 1
+
             ghost_collisions = map(lambda x: pygame.sprite.spritecollide(x, g.board.ghostSprites, False, collided=lambda x,y: x.color != y.color and pygame.Rect.colliderect(x.rect, y.rect)),g.board.ghostObjects.values())
             ghost_collisions = filter(None, ghost_collisions)
             helpers.process_ghost_collisions(ghost_collisions)

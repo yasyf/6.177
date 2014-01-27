@@ -1,6 +1,6 @@
 from constants import *
 from imports import *
-import helpers, path, itertools, Square, PacMan, Ghost, Actor
+import helpers, path, itertools, Square, PacMan, Ghost, Actor, Dot
 
 class Board:
     def __init__(self):
@@ -19,6 +19,11 @@ class Board:
         self.pathObjects = {}
 
         self.draw_path()
+
+        self.dotSprites = pygame.sprite.RenderPlain()
+        self.dotObjects = {}
+
+        self.draw_dots()
 
         #initialize and populate PacMan
         self.pacmanObject = PacMan.PacMan(self.path[len(self.path)/2])
@@ -78,6 +83,12 @@ class Board:
                 s = Square.Square(column,row,BLACK)
                 self.squareObjects[(column,row)] = s
                 self.squareSprites.add(s)
+
+    def draw_dots(self):
+        for p in self.path:
+            d = Dot.Dot(*p)
+            self.dotObjects[p] = d
+            self.dotSprites.add(d)
 
     def update_text(self):
         text = "Elapsed: %d Seconds" % (int((pygame.time.get_ticks() - g.start - self.pausetime)/1000))
@@ -139,6 +150,7 @@ class Board:
     def reprint_all(self):
         self.squareSprites.draw(g.screen)
         self.pathSprites.draw(g.screen)
+        self.dotSprites.draw(g.screen)
         #self.draw_grid()
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
