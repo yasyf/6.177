@@ -33,17 +33,17 @@ class PacMan(Actor):
 		g.handled_direction = True
 		super(PacMan,self).change_dir(direction)
 
-	def double_size(self):
-		self.image = pygame.transform.scale(self.image, (2*self.width, 2*self.height))
+	def is_dying(self):
+		return self._die > 0 if self._die else False
 
 	def die(self):
-		if self._die == None and g.wait_ticks > 0:
-			self._die = g.wait_ticks
-		elif g.wait_ticks < 1:
+		if self._die == None and g.board.is_paused():
+			self._die = g.board.get_pause_ticks()
+		elif not g.board.is_paused():
 			self._die = None
 			self.reset()
 		else:
-			percent = float(g.wait_ticks)/float(self._die)
+			percent = float(g.board.get_pause_ticks())/float(self._die)
 			self.image = pygame.transform.rotozoom(self.image, percent*100*4, percent)
 			g.board.reprint_no_ghosts()
 

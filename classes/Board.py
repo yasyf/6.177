@@ -1,11 +1,12 @@
 from constants import *
 from imports import *
-import helpers, path, itertools, Square, PacMan, Ghost, Actor, Dot
+import helpers, path, itertools, Square, PacMan, Ghost, Actor, Dot, sounds
 
 class Board:
     def __init__(self):
         self.paused = False
         self.pausetime = 0
+        self._wait_ticks = 0
         self.lastpaused = None
         self.set_path()
         #initialize and populate Squares
@@ -36,13 +37,34 @@ class Board:
 
         self.add_ghosts()
 
-    def toggle_paused(self):
-        self.paused = not self.paused
-        if self.paused:
+    def decrement_pause(self):
+        if self._wait_ticks > 0:
+            self._wait_ticks -= 1
+        if self._wait_ticks < 1:
+            self.toggle_paused()
+
+    def is_paused(self):
+        return self.paused
+
+    def get_pause_ticks(self):
+        return self._wait_ticks
+
+    def toggle_paused(self,miliseconds=None):
+        if self.paused == False:
+            self.paused = True
+            if miliseconds:
+                self._wait_ticks = miliseconds
+            sounds.background.stop()
             self.lastpaused = pygame.time.get_ticks()
         else:
-            self.pausetime += pygame.time.get_ticks() - self.lastpaused
-            self.lastpaused = None
+            self.paused = False
+            sounds.background.loop()
+            if self.lastpaused:
+                self.pausetime += pygame.time.get_ticks() - self.lastpaused
+                self.lastpaused = None
+            if not g.played_intro:
+                g.played_intro = True
+                g.start = pygame.time.get_ticks()
         g.screen.fill(BLACK)
         self.reprint_all()
         pygame.display.flip()
@@ -91,7 +113,7 @@ class Board:
             self.dotSprites.add(d)
 
     def update_text(self):
-        text = "Elapsed: %d Seconds" % (int((pygame.time.get_ticks() - g.start - self.pausetime)/1000))
+        text = "Elapsed: %d Seconds" % (int((pygame.time.get_ticks() - g.start - self.pausetime)/1000) if g.start else 0)
         elapsed = g.font.render(text,1,WHITE)
         g.screen.blit(elapsed, (1*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
 

@@ -68,4 +68,5 @@ class Actor(pygame.sprite.Sprite):
             self.update()
             self.step_forward()
 
-
+    def double_size(self):
+        self.image = pygame.transform.scale(self.image, (2*self.width, 2*self.height))

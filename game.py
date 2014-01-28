@@ -27,8 +27,6 @@ def new_game():
     g.clock = pygame.time.Clock()
     g.clock.tick(FRAMERATE)
 
-    g.start = pygame.time.get_ticks()
-
     g.score = 0
 
     setup()
@@ -44,10 +42,11 @@ def main_loop():
     pause_rect = pygame.Rect(4*TEXT_OFFSET_X - g.font.size("Pause")[0], TEXT_OFFSET_Y, g.font.size("Pause")[0], g.font.size("Pause")[1])
     
     g.board.pacmanObject.double_size()
+    map(lambda x: x.double_size(),g.board.ghostObjects.values())
+
     g.board.reprint_all()
     pygame.display.flip()
-    g.board.paused = True
-    g.wait_ticks = FRAMERATE * 4
+    g.board.toggle_paused(miliseconds=FRAMERATE * 4)
     sounds.intro.play()
 
     while g.stop == False:
@@ -66,27 +65,19 @@ def main_loop():
         if g.done == True:
             g.screen.fill(BLACK) #clear screen
             helpers.show_game_over()
-            pygame.display.flip() #flush to screen  
-        elif g.board.paused == True and g.wait_ticks > 0:
-            g.wait_ticks -= 1
-            if g.wait_ticks < 1:
-                g.board.paused = False
-                g.wait_ticks = 0
-                sounds.background.loop()
-            if g.played_intro:
+            pygame.display.flip() #flush to screen
+
+        elif g.board.get_pause_ticks() > 0:
+            g.board.decrement_pause()
+            if g.board.pacmanObject.is_dying():
                 g.board.pacmanObject.die()
-            else:
-                if g.wait_ticks < 1:
-                    g.played_intro = True
 
-        elif g.stop == False and g.board.paused == False: 
+        elif g.stop == False and not g.board.is_paused(): 
             g.screen.fill(BLACK) #clear screen
-
             pacman_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.ghostSprites)
             if pacman_collision != None:
                 sounds.dot.stop()
-                sounds.background.stop()
-                g.wait_ticks = FRAMERATE
+                g.board.toggle_paused(miliseconds=FRAMERATE)
                 g.board.pacmanObject.die()
                 g.lives -= 1
                 if g.lives < 0:
@@ -94,7 +85,6 @@ def main_loop():
                 g.board.reprint_no_ghosts()
                 time.sleep(1)
                 sounds.die.play()
-                g.board.paused = True
                 continue
 
             dot_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.dotSprites)
