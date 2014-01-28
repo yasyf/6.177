@@ -1,6 +1,7 @@
 from constants import *
 from imports import *
-import helpers, path, itertools, Square, PacMan, Ghost, Actor, Dot, sounds
+import dot, ghost, pacman, square, powerup
+import helpers, path, itertools
 
 class Board:
     def __init__(self):
@@ -26,8 +27,11 @@ class Board:
 
         self.draw_dots()
 
+        self.powerupSprites = pygame.sprite.RenderPlain()
+        self.powerupObjects = {}
+
         #initialize and populate PacMan
-        self.pacmanObject = PacMan.PacMan(self.path[len(self.path)/2])
+        self.pacmanObject = pacman.PacMan(self.path[len(self.path)/2])
                           
         self.pacmanSprite = pygame.sprite.GroupSingle()
         self.pacmanSprite.add(self.pacmanObject)
@@ -102,13 +106,13 @@ class Board:
     def draw_squares(self):
         for row in range(ROWS):
             for column in range(COLS):
-                s = Square.Square(column,row,BLACK)
+                s = square.Square(column,row,BLACK)
                 self.squareObjects[(column,row)] = s
                 self.squareSprites.add(s)
 
     def draw_dots(self):
         for p in self.path:
-            d = Dot.Dot(*p)
+            d = dot.Dot(*p)
             self.dotObjects[p] = d
             self.dotSprites.add(d)
 
@@ -148,7 +152,7 @@ class Board:
         for k,v in self.path_raw.iteritems():
             for p in v:
                 #s = Square(p[0],p[1],k)
-                s = Square.Square(p[0],p[1],g.path_color)
+                s = square.Square(p[0],p[1],g.path_color)
                 self.pathObjects[p] = s
                 self.pathSprites.add(s)
 
@@ -165,9 +169,9 @@ class Board:
         squares = path.get_surrounding_squares((COLS/2,ROWS/2))
 
         for pair in zip(colors,squares,CARDINALS.keys()):
-            ghost = Ghost.Ghost(pair[1],pair[0],pair[2])
-            self.ghostObjects[pair[1]] = ghost
-            self.ghostSprites.add(ghost)
+            g = ghost.Ghost(pair[1],pair[0],pair[2])
+            self.ghostObjects[pair[1]] = g
+            self.ghostSprites.add(g)
 
     def reprint_all(self):
         self.squareSprites.draw(g.screen)
@@ -176,6 +180,7 @@ class Board:
         #self.draw_grid()
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
+        self.powerupSprites.draw(g.screen)
         self.update_text()
 
     def reprint_no_ghosts(self):
@@ -184,4 +189,16 @@ class Board:
         self.pathSprites.draw(g.screen)
         self.dotSprites.draw(g.screen)
         self.pacmanSprite.draw(g.screen)
+        self.powerupSprites.draw(g.screen)
         pygame.display.flip()
+
+    def proccess_powerups(self):
+        if len(self.powerupObjects) >= MAX_POWERUPS:
+            return
+        if random.randint(0,POWERUP_CHANCE) == 0:
+            coordinates = None
+            while coordinates == None or coordinates in self.powerupObjects.keys():
+                coordinates = self.path[random.randint(0,len(self.path) - 1)]
+            p = powerup.Powerup(*coordinates)
+            self.powerupObjects[coordinates] = p
+            self.powerupSprites.add(p)

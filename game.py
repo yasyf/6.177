@@ -22,7 +22,7 @@ def new_game():
 
     g.font = pygame.font.SysFont("monospace", FONT_SIZE)
     
-    g.board = Board.Board()
+    g.board = board.Board()
 
     g.clock = pygame.time.Clock()
     g.clock.tick(FRAMERATE)
@@ -74,18 +74,34 @@ def main_loop():
 
         elif g.stop == False and not g.board.is_paused(): 
             g.screen.fill(BLACK) #clear screen
+
+            g.board.proccess_powerups()
+
             pacman_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.ghostSprites)
             if pacman_collision != None:
                 sounds.dot.stop()
-                g.board.toggle_paused(miliseconds=FRAMERATE)
-                g.board.pacmanObject.die()
-                g.lives -= 1
-                if g.lives < 0:
-                    g.done = True
-                g.board.reprint_no_ghosts()
-                time.sleep(1)
-                sounds.die.play()
-                continue
+                if g.board.pacmanObject.is_super() and pacman_collision.is_vulnerable():
+                    g.score += SUPER_CONSUME_SCORE_INCREMENT
+                    pacman_collision.stop_vulnerable()
+                    pacman_collision.reset()
+                    sounds.consume.play()
+                else:
+                    g.board.toggle_paused(miliseconds=FRAMERATE)
+                    g.board.pacmanObject.die()
+                    g.lives -= 1
+                    if g.lives < 0:
+                        g.done = True
+                    g.board.reprint_no_ghosts()
+                    time.sleep(1)
+                    sounds.die.play()
+                    continue
+
+            powerup_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.powerupSprites)
+            if powerup_collision != None:
+                g.score += SUPER_SCORE_INCREMENT
+                g.board.powerupSprites.remove(powerup_collision)
+                g.board.pacmanObject.go_super()
+                sounds.powerup.play()
 
             dot_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.dotSprites)
             if dot_collision != None:
