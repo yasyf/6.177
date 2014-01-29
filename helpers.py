@@ -54,8 +54,24 @@ def process_ghost_collisions(ghost_collisions):
                 ghost_collisions[i][0].reverse_dir()
                 ghost_collisions[i+1][0].reverse_dir()
 
+def show_intro():
+    g.clock.tick(FRAMERATE*2)
+    g.screen.fill(BLACK) #clear screen
+    g.board.reprint_players()
+    if g.board.get_pause_ticks() > FRAMERATE * 1.5:
+        show_intro_text("Ready")
+    elif g.board.get_pause_ticks() > FRAMERATE * 0.3:
+        show_intro_text("Set")
+    else:
+        show_intro_text("Go!")
+    pygame.display.flip()
+
+def show_intro_text(text):
+    loading = g.big_font.render(text,1,WHITE)
+    g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/4 + g.big_font.size(text)[1]/2))
+
 def show_loading():
-    text = "Loading..."
+    text = "Loading"
     loading = g.font.render(text,1,WHITE)
     g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.font.size(text)[0]/2,WINDOW_SIZE[1]/2 + g.font.size(text)[1]/2))
 

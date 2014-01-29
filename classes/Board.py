@@ -100,10 +100,6 @@ class Board:
             return self.squareObjects[(x,y)]
 
     def get_current_square(self):
-        """
-        Rotate the ant, depending on the color of the square that it's on,
-        and returns the square that the ant is currently on
-        """
         square = self.pacmanObject.get_current_square()
         return square
 
@@ -196,6 +192,11 @@ class Board:
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
         self.update_text()
+
+    def reprint_players(self):
+        self.reprint_local([self.pathObjects])
+        self.pacmanSprite.draw(g.screen)
+        self.ghostSprites.draw(g.screen)
 
     def reprint_no_ghosts(self):
         self.squareSprites.draw(g.screen)

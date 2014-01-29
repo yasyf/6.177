@@ -4,7 +4,7 @@ import pygame
 name = ""
 
 def reset():
-	global screen, board, clock, stop, done, font, score, lives, path_color, endpoints, handled_direction, played_intro, submitted
+	global screen, board, clock, stop, done, font, big_font, score, lives, path_color, endpoints, handled_direction, played_intro, submitted
 
 	screen = None
 	board = None
@@ -12,6 +12,7 @@ def reset():
 	stop = False
 	done = False
 	submitted = False
+	big_font = None
 	font = None
 	score = 0
 	lives = LIVES

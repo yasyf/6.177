@@ -22,6 +22,8 @@ def new_game():
 
     g.font = pygame.font.SysFont("monospace", FONT_SIZE)
     
+    g.big_font = pygame.font.SysFont("monospace", FONT_SIZE*4)
+    
     g.board = board.Board()
 
     g.clock = pygame.time.Clock()
@@ -46,7 +48,7 @@ def main_loop():
 
     g.board.reprint_all()
     pygame.display.flip()
-    g.board.toggle_paused(miliseconds=FRAMERATE * 4)
+    g.board.toggle_paused(miliseconds=FRAMERATE * 2.7)
     sounds.intro.play()
 
     while g.stop == False:
@@ -60,6 +62,7 @@ def main_loop():
                     g.board.toggle_paused()
             elif event.type == pygame.KEYDOWN:
                 helpers.check_keydown(event)
+
         if g.done == True:
             g.screen.fill(BLACK) #clear screen
             helpers.show_game_over()
@@ -67,8 +70,11 @@ def main_loop():
 
         elif g.board.get_pause_ticks() > 0:
             g.board.decrement_pause()
-            if g.board.pacmanObject.is_dying():
-                g.board.pacmanObject.die()
+            if g.played_intro:
+                if g.board.pacmanObject.is_dying():
+                    g.board.pacmanObject.die()
+            else:
+                helpers.show_intro()
 
         elif g.stop == False and not g.board.is_paused(): 
             g.screen.fill(BLACK) #clear screen
