@@ -57,6 +57,7 @@ def process_ghost_collisions(ghost_collisions):
 def show_intro():
     g.clock.tick(FRAMERATE*2)
     g.screen.fill(BLACK) #clear screen
+    g.board.draw_background()
     g.board.reprint_players()
     if g.board.get_pause_ticks() > FRAMERATE * 1.5:
         show_intro_text("Ready")
@@ -68,20 +69,20 @@ def show_intro():
 
 def show_intro_text(text):
     loading = g.big_font.render(text,1,WHITE)
-    g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/4 + g.big_font.size(text)[1]/2))
+    g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2, g.big_font.size(text)[1]/2))
 
 def show_loading():
     text = "Loading"
-    loading = g.font.render(text,1,WHITE)
-    g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.font.size(text)[0]/2,WINDOW_SIZE[1]/2 + g.font.size(text)[1]/2))
+    loading = g.big_font.render(text,1,WHITE)
+    g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/2 - g.big_font.size(text)[1]/2))
 
 def show_submitted(place):
     text = "You Are In %s Place" % (place)
-    position = g.font.render(text,1,WHITE)
-    g.screen.blit(position,(WINDOW_SIZE[0]/2 - g.font.size(text)[0]/2,WINDOW_SIZE[1]/2 + g.font.size(text)[1]/2))
+    position = g.big_font.render(text,1,WHITE)
+    g.screen.blit(position,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/2 - g.big_font.size(text)[1]))
     text = "New Game?"
-    again = g.font.render(text,1,WHITE)
-    g.screen.blit(again,(WINDOW_SIZE[0]/2 - g.font.size(text)[0]/2,WINDOW_SIZE[1]/2 + FONT_SIZE * 2 + g.font.size(text)[1]/2))
+    again = g.big_font.render(text,1,WHITE)
+    g.screen.blit(again,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/2 + FONT_SIZE * 4 - g.big_font.size(text)[1]))
 
 def show_game_over():
     if g.submitted:
@@ -94,11 +95,11 @@ def show_game_over():
 
 def game_over_screen():
     text = "Game Over"
-    game_over = g.font.render(text,1,WHITE)
-    g.screen.blit(game_over,(WINDOW_SIZE[0]/2 - g.font.size(text)[0]/2,WINDOW_SIZE[1]/2 + g.font.size(text)[1]/2))
+    game_over = g.big_font.render(text,1,WHITE)
+    g.screen.blit(game_over,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/2 - g.big_font.size(text)[1]))
     text = "Score: " + str(int(g.score))
-    score = g.font.render(text,1,WHITE)
-    g.screen.blit(score,(WINDOW_SIZE[0]/2 - g.font.size(text)[0]/2,WINDOW_SIZE[1]/2 + FONT_SIZE * 2 + g.font.size(text)[1]/2))
+    score = g.big_font.render(text,1,WHITE)
+    g.screen.blit(score,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/2 + FONT_SIZE * 4 - g.big_font.size(text)[1]))
     text = "Name: " + g.name
-    name = g.font.render(text,1,WHITE)
-    g.screen.blit(name,(WINDOW_SIZE[0]/2 - g.font.size(text)[0]/2,WINDOW_SIZE[1]/2 + FONT_SIZE * 4 + g.font.size(text)[1]/2))
+    name = g.big_font.render(text,1,WHITE)
+    g.screen.blit(name,(WINDOW_SIZE[0]/2 - g.big_font.size(text)[0]/2,WINDOW_SIZE[1]/2 + FONT_SIZE * 8 - g.big_font.size(text)[1]))

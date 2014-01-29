@@ -30,7 +30,7 @@ FONT_SIZE = 30
 
 #game
 TIME_MULTIPLIER = 1.0/(FRAMERATE*4)
-LIVES = 3
+LIVES = 0
 MAX_POWERUPS = 5
 POWERUP_CHANCE = 50 #1/x chance of powerup appearing
 SUPER_TIME = 60

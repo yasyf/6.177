@@ -46,6 +46,7 @@ def main_loop():
     g.board.pacmanObject.double_size()
     map(lambda x: x.double_size(),g.board.ghostObjects.values())
 
+    g.board.draw_background()
     g.board.reprint_all()
     pygame.display.flip()
     g.board.toggle_paused(miliseconds=FRAMERATE * 2.7)
@@ -78,6 +79,7 @@ def main_loop():
 
         elif g.stop == False and not g.board.is_paused(): 
             g.screen.fill(BLACK) #clear screen
+            g.board.draw_background()
 
             g.board.proccess_powerups()
 
@@ -96,6 +98,7 @@ def main_loop():
                     if g.lives < 0:
                         g.done = True
                     g.screen.fill(BLACK) #clear screen
+                    g.board.draw_background()
                     g.board.reprint_no_ghosts()
                     pygame.display.flip()
                     time.sleep(1)

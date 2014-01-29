@@ -10,11 +10,6 @@ class Board:
         self._wait_ticks = 0
         self.lastpaused = None
         self.set_path()
-        #initialize and populate Squares
-        self.squareSprites = pygame.sprite.RenderPlain()
-        self.squareObjects = {}
-
-        self.draw_squares()
 
         #initialize and populate Path
         self.pathSprites = pygame.sprite.RenderPlain()
@@ -40,6 +35,13 @@ class Board:
         self.ghostObjects = {}
 
         self.add_ghosts()
+
+        self.background = pygame.image.load("assets/Background-0.jpg").convert()
+        self.background = pygame.transform.scale(self.background, WINDOW_SIZE)
+        self.background.set_alpha(30)
+
+    def draw_background(self):
+        g.screen.blit(self.background, (0,0), self.background.get_rect())
 
     def decrement_pause(self):
         if self._wait_ticks > 0:
@@ -88,28 +90,6 @@ class Board:
 
         self.pausetime += pygame.time.get_ticks() - start
 
-    def get_square(self, x, y):
-        """
-        Given an (x, y) pair, return the Square at that location
-        """
-        try:
-            return self.squareObjects[(x,y)]
-        except KeyError:
-            x = x % self.size[1]
-            y = y % self.size[0]
-            return self.squareObjects[(x,y)]
-
-    def get_current_square(self):
-        square = self.pacmanObject.get_current_square()
-        return square
-
-    def draw_squares(self):
-        for row in range(ROWS):
-            for column in range(COLS):
-                s = square.Square(column,row,BLACK)
-                self.squareObjects[(column,row)] = s
-                self.squareSprites.add(s)
-
     def draw_dots(self):
         for p in self.path:
             d = dot.Dot(*p)
@@ -119,19 +99,19 @@ class Board:
     def update_text(self):
         text = "Elapsed: %d Seconds" % (int((pygame.time.get_ticks() - self.pausetime)/1000) if g.played_intro else 0)
         elapsed = g.font.render(text,1,WHITE)
-        g.screen.blit(elapsed, (1*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
+        g.screen.blit(elapsed, (1*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
 
         text = "Score: "+str(int(g.score))
         score = g.font.render(text,1,WHITE)
-        g.screen.blit(score, (2*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
+        g.screen.blit(score, (2*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
 
         text = "Lives: %d" % (g.lives if g.lives > 0 else 0)
         lives = g.font.render(text,1,WHITE)
-        g.screen.blit(lives, (3*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
+        g.screen.blit(lives, (3*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
 
         text = "Pause" if self.paused is False else "Resume"
         pause = g.font.render(text,1,WHITE)
-        g.screen.blit(pause, (4*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
+        g.screen.blit(pause, (4*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
 
     def draw_grid(self):
         """
@@ -187,7 +167,6 @@ class Board:
             del temp_group
 
     def reprint_all(self):
-        self.squareSprites.draw(g.screen)
         self.reprint_local([self.pathObjects,self.dotObjects,self.powerupObjects])
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
@@ -199,7 +178,6 @@ class Board:
         self.ghostSprites.draw(g.screen)
 
     def reprint_no_ghosts(self):
-        self.squareSprites.draw(g.screen)
         self.reprint_local([self.pathObjects,self.dotObjects,self.powerupObjects,self.ghostObjects])
         self.pacmanSprite.draw(g.screen)
         self.update_text()
