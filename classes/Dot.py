@@ -24,3 +24,6 @@ class Dot(pygame.sprite.Sprite):
     def set_image(self):
         self.image = pygame.image.load("assets/Dot.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
+
+    def get_current_pos(self):
+        return (self.col,self.row)

@@ -33,6 +33,9 @@ class Actor(pygame.sprite.Sprite):
 
     def get_current_square(self):
         return g.board.get_square(self.col,self.row)
+
+    def get_current_pos(self):
+        return (self.col,self.row)
     
     def step_forward(self):
         """

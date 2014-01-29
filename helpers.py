@@ -26,7 +26,7 @@ def check_keydown(event):
             g.stop = True
         else:
             g.name = g.name + event.unicode.encode('ascii', errors='ignore')
-    else:
+    elif g.played_intro:
         if event.key == pygame.K_p:
             g.board.toggle_paused()
         elif event.key == pygame.K_q:

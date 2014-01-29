@@ -32,9 +32,12 @@ def get_surrounding_squares_y(p):
     surrounding = [CARDINALS["up"],CARDINALS["down"]]
     return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
 
-def get_surrounding_squares(p):
+def get_surrounding_squares(p,n=1):
     surrounding = CARDINALS.values()
-    return [(x[0]+p[0],x[1]+p[1]) for x in surrounding]
+    squares = []
+    for i in range(1,n+1):
+        squares += [((x[0]*i)+p[0],(x[1]*i)+p[1]) for x in surrounding]
+    return squares
     
 def gen_skeleton_path():
     path_squares = []

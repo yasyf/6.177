@@ -92,13 +92,15 @@ def main_loop():
                     if g.lives < 0:
                         g.done = True
                     g.board.reprint_no_ghosts()
+                    pygame.display.flip()
                     time.sleep(1)
                     sounds.die.play()
                     continue
 
             powerup_collision = pygame.sprite.spritecollideany(g.board.pacmanSprite.sprite, g.board.powerupSprites)
-            if powerup_collision != None:
+            if powerup_collision != None and not g.board.pacmanObject.is_super():
                 g.score += SUPER_SCORE_INCREMENT
+                del g.board.powerupObjects[powerup_collision.get_current_pos()]
                 g.board.powerupSprites.remove(powerup_collision)
                 g.board.pacmanObject.go_super()
                 sounds.powerup.play()
@@ -119,7 +121,7 @@ def main_loop():
             map(lambda x: x.animate(),g.board.ghostObjects.values()) #update ghost animation and move forward
             g.board.pacmanObject.animate() #move pacman forward and play animation
             
-            g.board.reprint_all() #redraw all sprites
+            g.board.reprint_no_ghosts() #redraw all sprites
             g.score += TIME_MULTIPLIER
             pygame.display.flip() #flush to screen
     if g.stop == True and g.done == True:

@@ -59,6 +59,7 @@ class PacMan(Actor):
 			percent = float(g.board.get_pause_ticks())/float(self._die)
 			self.image = pygame.transform.rotozoom(self.image, percent*100*4, percent)
 			g.board.reprint_no_ghosts()
+			pygame.display.flip()
 
 	def go_super(self):
 		if self.is_super():

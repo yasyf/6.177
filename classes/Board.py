@@ -69,9 +69,10 @@ class Board:
             if not g.played_intro:
                 g.played_intro = True
                 g.start = pygame.time.get_ticks()
-        g.screen.fill(BLACK)
-        self.reprint_all()
-        pygame.display.flip()
+        if g.played_intro:
+            g.screen.fill(BLACK)
+            self.reprint_no_ghosts()
+            pygame.display.flip()
 
     def set_path(self):
         g.screen.fill(BLACK) #clear screen
@@ -89,11 +90,11 @@ class Board:
         Given an (x, y) pair, return the Square at that location
         """
         try:
-            return self.boardSquares[(x,y)]
+            return self.squareObjects[(x,y)]
         except KeyError:
             x = x % self.size[1]
             y = y % self.size[0]
-            return self.boardSquares[(x,y)]
+            return self.squareObjects[(x,y)]
 
     def get_current_square(self):
         """
@@ -173,24 +174,31 @@ class Board:
             self.ghostObjects[pair[1]] = g
             self.ghostSprites.add(g)
 
+    def reprint_local(self, objectList):
+        surrounding = path.get_surrounding_squares(self.pacmanObject.get_current_pos())
+        surrounding += reduce(lambda x,y: x + path.get_surrounding_squares(y,n=VISIBILITY), surrounding, [])
+        surrounding += [self.pacmanObject.get_current_pos()] 
+        for group in objectList:
+            temp_group = pygame.sprite.RenderPlain()
+            for member in group.values():
+                if member.get_current_pos() in surrounding:
+                    temp_group.add(member)
+            temp_group.draw(g.screen)
+            temp_group.empty()
+            del temp_group
+
     def reprint_all(self):
         self.squareSprites.draw(g.screen)
-        self.pathSprites.draw(g.screen)
-        self.dotSprites.draw(g.screen)
-        #self.draw_grid()
+        self.reprint_local([self.pathObjects,self.dotObjects,self.powerupObjects])
         self.pacmanSprite.draw(g.screen)
         self.ghostSprites.draw(g.screen)
-        self.powerupSprites.draw(g.screen)
         self.update_text()
 
     def reprint_no_ghosts(self):
-        g.screen.fill(BLACK) #clear screen
         self.squareSprites.draw(g.screen)
-        self.pathSprites.draw(g.screen)
-        self.dotSprites.draw(g.screen)
+        self.reprint_local([self.pathObjects,self.dotObjects,self.powerupObjects,self.ghostObjects])
         self.pacmanSprite.draw(g.screen)
-        self.powerupSprites.draw(g.screen)
-        pygame.display.flip()
+        self.update_text()
 
     def proccess_powerups(self):
         if len(self.powerupObjects) >= MAX_POWERUPS:

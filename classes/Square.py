@@ -21,3 +21,6 @@ class Square(pygame.sprite.Sprite):
         Returns the rect object that belongs to this Square
         """
         return self.rect
+
+    def get_current_pos(self):
+        return (self.col,self.row)
