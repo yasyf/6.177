@@ -8,9 +8,13 @@ app.secret_key = os.environ['sk']
     
 @app.route('/')
 def index():
-	insert_high_score(request.values)
+	if request.values.get('name') and request.values.get('score'):
+		return insert_high_score(request.values)
 	return render_template('index.html',scores=get_high_scores())
 
+@app.template_filter('ordinal')
+def ordinal_filter(i):
+    return ordinal(i)
 
 if __name__ == '__main__':
 	if os.environ.get('PORT'):

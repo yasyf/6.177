@@ -39,12 +39,14 @@ td
 		<h1>Japanese PacMan Highscores</h1>
 		<table>
 			<tr>
+				<th>Place</th>
 				<th>Name</th>
 				<th>Score</th>
 				<th>Date</th>
 			</tr>
 		{% for score in scores %}
 		    <tr>
+		        <td>{{ loop.index|ordinal }}</td>
 		        <td>{{ score.name }}</td>
 		        <td>{{ score.score }}</td>
 		        <td>{{ score.dt.strftime('%Y-%m-%d') }}</td>

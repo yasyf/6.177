@@ -1,6 +1,6 @@
 from constants import *
 from imports import *
-import helpers, time
+import helpers
 
 def new_game():
     """

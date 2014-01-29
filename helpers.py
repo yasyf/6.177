@@ -17,13 +17,12 @@ def get_col_left_p(col):
     return (col * WIDTH) + OFFSET
 
 def check_keydown(event):
-    if g.done == True:
+    if g.done == True and g.submitted == False:
         if event.key == pygame.K_BACKSPACE:
             if len(g.name) > 1:
                 g.name = g.name[:-1]
         elif event.key == pygame.K_RETURN:
-            urllib2.urlopen('http://japanese-pacman-highscores.herokuapp.com/?name=%s&score=%d' % (urllib2.quote(g.name), g.score))
-            g.stop = True
+            g.submitted = True
         else:
             g.name = g.name + event.unicode.encode('ascii', errors='ignore')
     elif g.played_intro:
@@ -57,11 +56,29 @@ def show_loading():
     loading = g.font.render(text,1,WHITE)
     g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + g.font.size(text)[1]))
 
+def show_submitted(place, count):
+    text = "You Are In %d Place" % (place)
+    loading = g.font.render(text,1,WHITE)
+    g.screen.blit(loading,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + g.font.size(text)[1]))
+    again = "New Game Begins In %d" % (count)
+    again = g.font.render(text,1,WHITE)
+    g.screen.blit(again,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + FONT_SIZE * 2 + g.font.size(text)[1]))
+
 def show_game_over():
+    if g.submitted:
+        response = urllib2.urlopen('http://japanese-pacman-highscores.herokuapp.com/?name=%s&score=%d' % (urllib2.quote(g.name), g.score))
+            for i in range(1,6):
+                show_submitted(response.read().strip(),i)
+                time.sleep(1)
+            g.stop = True
+    else:
+        game_over_screen()
+
+def game_over_screen():
     text = "Game Over"
     game_over = g.font.render(text,1,WHITE)
     g.screen.blit(game_over,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + g.font.size(text)[1]))
-    text = "Score: " + str(g.score)
+    text = "Score: " + str(int(g.score))
     score = g.font.render(text,1,WHITE)
     g.screen.blit(score,(WINDOW_SIZE[0]/2 - g.font.size(text)[0],WINDOW_SIZE[1]/2 + FONT_SIZE * 2 + g.font.size(text)[1]))
     text = "Name: " + g.name
