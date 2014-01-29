@@ -1,6 +1,7 @@
 from constants import *
 from imports import *
 from actor import Actor
+import path
 
 class PacMan(Actor):
 	def __init__(self,p):
@@ -33,7 +34,12 @@ class PacMan(Actor):
 		self.set_image(self.img)
 		if self.is_super():
 			self.stop_super()
-		super(PacMan,self).reset()
+		surrounding = path.get_surrounding_squares((COLS/2, ROWS/2),n=5) + [(COLS/2, ROWS/2)]
+		#check if there are any ghosts in the squares surrounding the center, and spawn at original spawn point instead if so
+		if reduce(lambda x,y: x or (y in surrounding), reduce(lambda x,y: x + [y.get_current_pos()], g.board.ghostObjects.values(), []), False):
+			self.goto(*g.board.path[len(g.board.path)/2])
+		else:
+			super(PacMan,self).reset()
 
 	def update(self):
 		if self._dot or self.transformations.index(self.img) > 0:
