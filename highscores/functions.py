@@ -11,6 +11,9 @@ ordinal = lambda n: "%d%s" % (n,"tsnrhtdd"[(n/10%10!=1)*(n%10<4)*n%10::4])
 
 def insert_high_score(values):
     if values.get('name') and values.get('score'):
+    	old = highscores.find_one({"name": values.get('name')})
+    	if old != None and old["score"] > int(values.get('score')):
+    		return ordinal(highscores.find({"score": {"$gte": old["score"]}}).count())
         highscores.update({"name": values.get('name')}, {"$set": {"score": int(values.get('score')), "dt": datetime.datetime.now()}}, True)
         return ordinal(highscores.find({"score": {"$gte": int(values.get('score'))}}).count())
 

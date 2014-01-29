@@ -56,9 +56,7 @@ def main_loop():
                 g.stop = True
                 pygame.quit()
             elif event.type==pygame.MOUSEBUTTONUP:
-                if g.done == True:
-                    g.stop = True
-                elif pause_rect.collidepoint(event.pos):
+                if pause_rect.collidepoint(event.pos):
                     g.board.toggle_paused()
             elif event.type == pygame.KEYDOWN:
                 helpers.check_keydown(event)
@@ -91,6 +89,7 @@ def main_loop():
                     g.lives -= 1
                     if g.lives < 0:
                         g.done = True
+                    g.screen.fill(BLACK) #clear screen
                     g.board.reprint_no_ghosts()
                     pygame.display.flip()
                     time.sleep(1)

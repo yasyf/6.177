@@ -6,7 +6,7 @@ from functions import *
 app = Flask(__name__)
 app.secret_key = os.environ['sk']
     
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def index():
 	if request.values.get('name') and request.values.get('score'):
 		return insert_high_score(request.values)

@@ -68,7 +68,6 @@ class Board:
                 self.lastpaused = None
             if not g.played_intro:
                 g.played_intro = True
-                g.start = pygame.time.get_ticks()
         if g.played_intro:
             g.screen.fill(BLACK)
             self.reprint_no_ghosts()
@@ -76,14 +75,18 @@ class Board:
 
     def set_path(self):
         g.screen.fill(BLACK) #clear screen
+        start = pygame.time.get_ticks()
         helpers.show_loading()
         pygame.display.flip()
+
         self.path_raw = {BLUE: path.gen_skeleton_path(), GREEN: path.timeout(path.gen_connecting_path), RED: []}
         while self.path_raw[GREEN] == None:
             self.path_raw[GREEN] = path.timeout(path.gen_connecting_path)
         for p in g.endpoints:
             self.path_raw[RED] += path.gen_closest_wall_path(p)
         self.path = list(set(itertools.chain(*self.path_raw.values())))
+
+        self.pausetime += pygame.time.get_ticks() - start
 
     def get_square(self, x, y):
         """
@@ -118,21 +121,21 @@ class Board:
             self.dotSprites.add(d)
 
     def update_text(self):
-        text = "Elapsed: %d Seconds" % (int((pygame.time.get_ticks() - g.start - self.pausetime)/1000) if g.start else 0)
+        text = "Elapsed: %d Seconds" % (int((pygame.time.get_ticks() - self.pausetime)/1000) if g.played_intro else 0)
         elapsed = g.font.render(text,1,WHITE)
-        g.screen.blit(elapsed, (1*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
+        g.screen.blit(elapsed, (1*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
 
         text = "Score: "+str(int(g.score))
         score = g.font.render(text,1,WHITE)
-        g.screen.blit(score, (2*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
+        g.screen.blit(score, (2*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
 
-        text = "Lives: "+str(g.lives)
+        text = "Lives: %d" % (g.lives if g.lives > 0 else 0)
         lives = g.font.render(text,1,WHITE)
-        g.screen.blit(lives, (3*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
+        g.screen.blit(lives, (3*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
 
         text = "Pause" if self.paused is False else "Resume"
         pause = g.font.render(text,1,WHITE)
-        g.screen.blit(pause, (4*TEXT_OFFSET_X - g.font.size(text)[0], TEXT_OFFSET_Y))
+        g.screen.blit(pause, (4*TEXT_OFFSET_X - g.font.size(text)[0]/2, TEXT_OFFSET_Y))
 
     def draw_grid(self):
         """
