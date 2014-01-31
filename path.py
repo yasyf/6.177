@@ -2,7 +2,7 @@ from constants import *
 from imports import *
 import random, threading
 
-def timeout(func, timeout_duration=0.1, default=None, *args, **kwargs):
+def timeout(func, timeout_duration=0.2, default=None, *args, **kwargs):
     """This function will spawn a thread and run the given function
     using the args, kwargs and return the given default value if the
     timeout_duration is exceeded.
